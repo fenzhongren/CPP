@@ -4,6 +4,14 @@ project(Demo1)
 
 enable_testing()
 
+if("${CMAKE_C_COMPILER_ID}" STREQUAL "GUN")
+    set(warnings "-Wall -Wextra -Werror")
+elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
+    set(warnings "/W4 /WX /EHsc")
+endif()
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DTEST ${warnings}")
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 configure_file(
@@ -27,4 +35,4 @@ add_executable(demo ${DIR_SRCS})
 
 target_link_libraries(demo ${EXTRA_LIBS})
 
-add_test(demo_test demo)
+add_test(demo_test demo 3 4)
