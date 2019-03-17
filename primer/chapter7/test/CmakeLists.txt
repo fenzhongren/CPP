@@ -1,3 +1,5 @@
-add_executable(test_SalesData main.cc)
+add_executable(SalesDataTest main.cc)
 
-target_link_libraries(main SalesData)
+target_link_libraries(SalesDataTest SalesData)
+
+add_test(ToDoSalesDataTest SalesDataTest)
