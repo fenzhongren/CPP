@@ -16,7 +16,7 @@ int main()
     SalesData trans;
     while(Read(cin, trans)) {
       if(total.get_isbn() == trans.get_isbn()) {
-        total.combine(trans);
+        total.Combine(trans);
       } else {
         Print(cout, total);
         total = trans;
