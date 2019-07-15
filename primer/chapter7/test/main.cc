@@ -18,12 +18,15 @@ int main()
       if(total.get_isbn() == trans.get_isbn()) {
         total.Combine(trans);
       } else {
-        Print(cout, total);
+        Print(cout, total) << endl;
         total = trans;
       }
     }
     Print(cout, total) << endl;
   } else {
     cerr << "No data?!" << endl;
+    return -1;
   }
+
+  return 0;
 }
