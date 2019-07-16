@@ -10,9 +10,9 @@
 class Book
 {
 public:
-  using SPtr = shared_ptr<Book>
+  using SPtr = std::shared_ptr<Book>;
   Book() = delete;
-  Book(int id, double price, const std::string name_): id_(id), price_(price),
+  Book(int id, double price, const std::string name): id_(id), price_(price),
     name_(name)
   {}
 
@@ -28,12 +28,12 @@ public:
   virtual ~Book() = default;
 
   friend std::ostream &operator<<(std::ostream &os, const Book &book);
-  friend std::istream &operator>>(std::ostream &os, Book &book);
+  friend std::istream &operator>>(std::istream &is, Book &book);
 
 private:
   int id_;
   double price_;
-  std:string name_;
+  std::string name_;
 };
 
 
@@ -46,8 +46,8 @@ public:
   {}
 
 
-  virtual bool IsSatisfiedBy(Book::SPtr book_sptr) override
-  {return book_sptr->price_ == price_;} 
+  virtual bool IsSatisfiedBy(Book::SPtr book_sptr) const
+  {return book_sptr->get_price() == price_;} 
 
   virtual ~BookSpecificationByPrice() = default;
 private:
@@ -57,12 +57,12 @@ private:
 class BookSpecificationByAll: public CompositeSpecification<Book::SPtr>
 {
 public:
-  BookSpecificationByPrice() = default;
+  BookSpecificationByAll() = default;
 
-  virtual bool IsSatisfiedBy(Book::SPtr book_sptr) override
+  virtual bool IsSatisfiedBy(Book::SPtr book_sptr) const
   {return true;} 
 
-  virtual ~BookSpecificationByPrice() = default;
+  virtual ~BookSpecificationByAll() = default;
 };
 
 class BookRepository
@@ -73,10 +73,10 @@ public:
   void Add(Book::SPtr b_sptr)
   {book_map_[b_sptr->get_id()] = b_sptr;}
 
-  std::vector<Book::SPtr> Query(ISpecification::SPtr spec_sptr);
+  std::vector<Book::SPtr> Query(ISpecification<Book::SPtr>::SPtr spec_sptr);
 
 private:
   std::map<int, Book::SPtr> book_map_;
-}
+};
 
 #endif  //CPP_DESIGN_PATTERN_SPECIFICATION_BOOK_H_

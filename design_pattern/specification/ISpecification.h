@@ -11,12 +11,12 @@ public:
 
   ISpecification() = default;
 
-  virtual bool IsSatisfiedBy(EntitySPtr) = 0;
-  virtual SPtr And(SPtr) = 0;
-  virtual SPtr Or(SPtr) = 0;
-  virtual SPtr Not() = 0;
+  virtual bool IsSatisfiedBy(EntitySPtr) const = 0;
+  virtual SPtr And(SPtr) const = 0;
+  virtual SPtr Or(SPtr) const = 0;
+  virtual SPtr Not() const = 0;
 
-  virtual ～ISpecification() = default;
+  virtual ~ISpecification() = default;
 };
 
 #endif  //CPP_DESIGN_PATTERN_SPECIFICATION_ISPECIFICATION_H_

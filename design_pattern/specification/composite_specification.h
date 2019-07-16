@@ -3,8 +3,6 @@
 
 #include "ISpecification.h"
 
-#include <memory>
-
 template<typename EntitySPtr>
 class AndSpecification;
 
@@ -15,29 +13,30 @@ template<typename EntitySPtr>
 class NotSpecification;
 
 template<typename EntitySPtr>
-class CompositeSpecification: public ISpecification<EntitySPtr>
-  public std::enable_shared_from_this<CompositeSpecification>
+class CompositeSpecification: public ISpecification<EntitySPtr>,
+  public std::enable_shared_from_this<CompositeSpecification<EntitySPtr>>
 {
 public:
+  using SPtr = typename ISpecification<EntitySPtr>::SPtr;
   CompositeSpecification() = default;
 
-  virtual bool IsSatisfiedBy(EntitySPtr) = 0;
+  virtual bool IsSatisfiedBy(EntitySPtr) const = 0;
 
-  virtual SPtr And(SPtr right) override
+  virtual SPtr And(SPtr right) const
   {
-    return make_shared<AndSpecification<EntitySPtr>>(shared_from_this(),
+    return std::make_shared<AndSpecification<EntitySPtr>>(this->shared_from_this(),
       right);
   }
 
-  virtual SPtr Or(SPtr right) override
+  virtual SPtr Or(SPtr right) const
   {
-    return make_shared<OrSpecification<EntitySPtr>>(shared_from_this(),
+    return std::make_shared<OrSpecification<EntitySPtr>>(this->shared_from_this(),
       right);
   }
 
-  virtual SPtr Not() override
+  virtual SPtr Not() const
   {
-    return make_shared<NotSpecification<EntitySPtr>>(shared_from_this());
+    return std::make_shared<NotSpecification<EntitySPtr>>(this->shared_from_this());
   }
 
   virtual ~CompositeSpecification() = default;
@@ -47,11 +46,12 @@ template<typename EntitySPtr>
 class AndSpecification: public CompositeSpecification<EntitySPtr>
 {
 public:
+  using SPtr = typename ISpecification<EntitySPtr>::SPtr;
   AndSpecification() = delete;
   AndSpecification(SPtr left, SPtr right): left_(left), right_(right)
   {}
 
-  virtual bool IsSatisfiedBy(EntitySPtr e_sptr) override
+  virtual bool IsSatisfiedBy(EntitySPtr e_sptr) const
   {
     bool result = false;
 
@@ -63,7 +63,7 @@ public:
     return result;
   }
 
-  virtual ~AndSpecification() = default
+  virtual ~AndSpecification() = default;
 private:
   SPtr left_;
   SPtr right_;
@@ -73,10 +73,11 @@ template<typename EntitySPtr>
 class OrSpecification: public CompositeSpecification<EntitySPtr>
 {
 public:
+  using SPtr = typename ISpecification<EntitySPtr>::SPtr;
   OrSpecification() = delete;
   OrSpecification(SPtr left, SPtr right);
 
-  virtual bool IsSatisfiedBy(EntitySPtr e_sptr) override
+  virtual bool IsSatisfiedBy(EntitySPtr e_sptr) const
   {
     bool result = false;
     if(left_->IsSatisfiedBy(e_sptr) || right_->IsSatisfiedBy(e_sptr)) {
@@ -85,7 +86,7 @@ public:
     return result;
   }
 
-  virtual ~OrSpecification() = default
+  virtual ~OrSpecification() = default;
 private:
   SPtr left_;
   SPtr right_;
@@ -95,10 +96,11 @@ template<typename EntitySPtr>
 class NotSpecification: public CompositeSpecification<EntitySPtr>
 {
 public:
+  using SPtr = typename ISpecification<EntitySPtr>::SPtr;
   NotSpecification() = delete;
   NotSpecification(SPtr previous);
 
-  virtual bool IsSatisfiedBy(EntitySPtr e_sptr) override
+  virtual bool IsSatisfiedBy(EntitySPtr e_sptr) const
   {
     bool result = false;
     if(!previous_->IsSatisfiedBy(e_sptr)) {
@@ -107,7 +109,7 @@ public:
     return result;
   }
 
-  virtual ~NotSpecification() = default
+  virtual ~NotSpecification() = default;
 private:
   SPtr previous_;
 };
