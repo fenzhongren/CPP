@@ -36,7 +36,21 @@ private:
   std::string name_;
 };
 
+class BookSpecificationByName: public CompositeSpecification<Book::SPtr>
+{
+public:
+  BookSpecificationByName() = delete;
+  BookSpecificationByName(const std::string &name): name_(name)
+  {}
 
+
+  virtual bool IsSatisfiedBy(Book::SPtr book_sptr) const
+  {return book_sptr->get_name() == name_;} 
+
+  virtual ~BookSpecificationByName() = default;
+private:
+  std::string name_;
+};
 
 class BookSpecificationByPrice: public CompositeSpecification<Book::SPtr>
 {
@@ -50,6 +64,40 @@ public:
   {return book_sptr->get_price() == price_;} 
 
   virtual ~BookSpecificationByPrice() = default;
+private:
+  double price_;
+};
+
+class BookSpecificationByPriceGreaterThan:
+ public CompositeSpecification<Book::SPtr>
+{
+public:
+  BookSpecificationByPriceGreaterThan() = delete;
+  BookSpecificationByPriceGreaterThan(double price): price_(price)
+  {}
+
+
+  virtual bool IsSatisfiedBy(Book::SPtr book_sptr) const
+  {return book_sptr->get_price() > price_;} 
+
+  virtual ~BookSpecificationByPriceGreaterThan() = default;
+private:
+  double price_;
+};
+
+class BookSpecificationByPriceLessThan:
+ public CompositeSpecification<Book::SPtr>
+{
+public:
+  BookSpecificationByPriceLessThan() = delete;
+  BookSpecificationByPriceLessThan(double price): price_(price)
+  {}
+
+
+  virtual bool IsSatisfiedBy(Book::SPtr book_sptr) const
+  {return book_sptr->get_price() < price_;} 
+
+  virtual ~BookSpecificationByPriceLessThan() = default;
 private:
   double price_;
 };

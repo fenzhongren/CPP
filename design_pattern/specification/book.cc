@@ -2,7 +2,7 @@
 
 std::ostream &operator<<(std::ostream &os, const Book &book)
 {
-  os << book.id_ << book.price_ << book.name_;
+  os << book.id_  << " " << book.price_ << " " << book.name_;
   return os;
 }
 
