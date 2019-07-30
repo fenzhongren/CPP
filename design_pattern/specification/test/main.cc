@@ -29,11 +29,11 @@ std::ostream &operator<<(std::ostream &os, const BookParameter &book)
   return os;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
   BookRepository book_repository;
 
-  ifstream is("./book.txt");
+  ifstream is(argv[1]);
   BookParameter temp;
   while(is >> temp) {
     //cout << temp << endl;
