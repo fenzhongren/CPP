@@ -3,16 +3,16 @@
 
 #include<memory>
 
-template<typename EntitySPtr>
+template<typename Entity>
 class ISpecification
 {
 public:
-  using CSPtr = std::shared_ptr<const ISpecification<EntitySPtr>>;
-  using SPtr = std::shared_ptr<ISpecification<EntitySPtr>>;
+  using CSPtr = std::shared_ptr<const ISpecification<Entity>>;
+  using SPtr = std::shared_ptr<ISpecification<Entity>>;
 
   ISpecification() = default;
 
-  virtual bool IsSatisfiedBy(EntitySPtr) const = 0;
+  virtual bool IsSatisfiedBy(const Entity &) const = 0;
   virtual SPtr And(CSPtr) const = 0;
   virtual SPtr Or(CSPtr) const = 0;
   virtual SPtr Not() const = 0;

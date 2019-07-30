@@ -43,11 +43,16 @@ int main()
   auto specification1  = make_shared<BookSpecificationByPriceGreaterThan>(30.0);
   auto specification2  = make_shared<BookSpecificationByPriceLessThan>(50);
   auto specification3  = make_shared<BookSpecificationByName>("aaa");
-  auto books = book_repository.Query(specification1->And(specification2)->Or(specification3));
-
-  for(auto book: books) {
-    cout << *book << endl;
+  {
+    auto books = book_repository.Query(specification1->And(specification2));
+    for(auto book: books) {
+      cout << *book << endl;
+    }
   }
+
+  book_repository.Remove(specification1->And(specification2));
+
+  cout << "good bye" << endl;
 
   return 0;
 }

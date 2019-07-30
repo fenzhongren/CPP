@@ -25,7 +25,8 @@ public:
   std::string get_name() const
   {return name_;}
 
-  virtual ~Book() = default;
+  virtual ~Book()
+  {std::cout << "Destory book " << name_ << std::endl;}
 
   friend std::ostream &operator<<(std::ostream &os, const Book &book);
   friend std::istream &operator>>(std::istream &is, Book &book);
@@ -44,8 +45,8 @@ public:
   {}
 
 
-  virtual bool IsSatisfiedBy(Book::SPtr book_sptr) const
-  {return book_sptr->get_name() == name_;} 
+  virtual bool IsSatisfiedBy(const Book::SPtr &book_csptr) const
+  {return book_csptr->get_name() == name_;} 
 
   virtual ~BookSpecificationByName() = default;
 private:
@@ -60,8 +61,8 @@ public:
   {}
 
 
-  virtual bool IsSatisfiedBy(Book::SPtr book_sptr) const
-  {return book_sptr->get_price() == price_;} 
+  virtual bool IsSatisfiedBy(const Book::SPtr &book_csptr) const
+  {return book_csptr->get_price() == price_;} 
 
   virtual ~BookSpecificationByPrice() = default;
 private:
@@ -77,8 +78,8 @@ public:
   {}
 
 
-  virtual bool IsSatisfiedBy(Book::SPtr book_sptr) const
-  {return book_sptr->get_price() > price_;} 
+  virtual bool IsSatisfiedBy(const Book::SPtr &book_csptr) const
+  {return book_csptr->get_price() > price_;} 
 
   virtual ~BookSpecificationByPriceGreaterThan() = default;
 private:
@@ -94,8 +95,8 @@ public:
   {}
 
 
-  virtual bool IsSatisfiedBy(Book::SPtr book_sptr) const
-  {return book_sptr->get_price() < price_;} 
+  virtual bool IsSatisfiedBy(const Book::SPtr &book_csptr) const
+  {return book_csptr->get_price() < price_;} 
 
   virtual ~BookSpecificationByPriceLessThan() = default;
 private:
@@ -107,7 +108,7 @@ class BookSpecificationByAll: public CompositeSpecification<Book::SPtr>
 public:
   BookSpecificationByAll() = default;
 
-  virtual bool IsSatisfiedBy(Book::SPtr book_sptr) const
+  virtual bool IsSatisfiedBy(const Book::SPtr &book_csptr) const
   {return true;} 
 
   virtual ~BookSpecificationByAll() = default;
@@ -122,6 +123,8 @@ public:
   {book_map_[b_sptr->get_id()] = b_sptr;}
 
   std::vector<Book::SPtr> Query(ISpecification<Book::SPtr>::SPtr spec_sptr);
+
+  void Remove(ISpecification<Book::SPtr>::SPtr spec_sptr);
 
 private:
   std::map<int, Book::SPtr> book_map_;

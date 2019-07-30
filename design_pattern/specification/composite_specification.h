@@ -3,64 +3,64 @@
 
 #include "ISpecification.h"
 
-template<typename EntitySPtr>
+template<typename Entity>
 class AndSpecification;
 
-template<typename EntitySPtr>
+template<typename Entity>
 class OrSpecification;
 
-template<typename EntitySPtr>
+template<typename Entity>
 class NotSpecification;
 
-template<typename EntitySPtr>
-class CompositeSpecification: public ISpecification<EntitySPtr>,
-  public std::enable_shared_from_this<CompositeSpecification<EntitySPtr>>
+template<typename Entity>
+class CompositeSpecification: public ISpecification<Entity>,
+  public std::enable_shared_from_this<CompositeSpecification<Entity>>
 {
 public:
-  using SPtr = typename ISpecification<EntitySPtr>::SPtr;
-  using CSPtr = typename ISpecification<EntitySPtr>::CSPtr;
+  using SPtr = typename ISpecification<Entity>::SPtr;
+  using CSPtr = typename ISpecification<Entity>::CSPtr;
 
   CompositeSpecification() = default;
 
-  virtual bool IsSatisfiedBy(EntitySPtr) const = 0;
+  virtual bool IsSatisfiedBy(const Entity &) const = 0;
 
   virtual SPtr And(CSPtr right) const override
   {
-    return std::make_shared<AndSpecification<EntitySPtr>>(this->shared_from_this(),
+    return std::make_shared<AndSpecification<Entity>>(this->shared_from_this(),
       right);
   }
 
   virtual SPtr Or(CSPtr right) const override
   {
-    return std::make_shared<OrSpecification<EntitySPtr>>(this->shared_from_this(),
+    return std::make_shared<OrSpecification<Entity>>(this->shared_from_this(),
       right);
   }
 
   virtual SPtr Not() const override
   {
-    return std::make_shared<NotSpecification<EntitySPtr>>(this->shared_from_this());
+    return std::make_shared<NotSpecification<Entity>>(this->shared_from_this());
   }
 
   virtual ~CompositeSpecification() = default;
 };
 
-template<typename EntitySPtr>
-class AndSpecification: public CompositeSpecification<EntitySPtr>
+template<typename Entity>
+class AndSpecification: public CompositeSpecification<Entity>
 {
 public:
-  using SPtr = typename ISpecification<EntitySPtr>::SPtr;
-  using CSPtr = typename ISpecification<EntitySPtr>::CSPtr;
+  using SPtr = typename ISpecification<Entity>::SPtr;
+  using CSPtr = typename ISpecification<Entity>::CSPtr;
 
   AndSpecification() = delete;
   AndSpecification(CSPtr left, CSPtr right): left_(left), right_(right)
   {}
 
-  virtual bool IsSatisfiedBy(EntitySPtr e_sptr) const override
+  virtual bool IsSatisfiedBy(const Entity &entity) const override
   {
     bool result = false;
 
-    if(left_->IsSatisfiedBy(e_sptr)) {
-      if(right_->IsSatisfiedBy(e_sptr)) {
+    if(left_->IsSatisfiedBy(entity)) {
+      if(right_->IsSatisfiedBy(entity)) {
         result = true;
       }
     }
@@ -73,21 +73,21 @@ private:
   CSPtr right_;
 };
 
-template<typename EntitySPtr>
-class OrSpecification: public CompositeSpecification<EntitySPtr>
+template<typename Entity>
+class OrSpecification: public CompositeSpecification<Entity>
 {
 public:
-  using SPtr = typename ISpecification<EntitySPtr>::SPtr;
-  using CSPtr = typename ISpecification<EntitySPtr>::CSPtr;
+  using SPtr = typename ISpecification<Entity>::SPtr;
+  using CSPtr = typename ISpecification<Entity>::CSPtr;
 
   OrSpecification() = delete;
   OrSpecification(CSPtr left, CSPtr right): left_(left), right_(right)
   {}
 
-  virtual bool IsSatisfiedBy(EntitySPtr e_sptr) const override
+  virtual bool IsSatisfiedBy(const Entity &entity) const override
   {
     bool result = false;
-    if(left_->IsSatisfiedBy(e_sptr) || right_->IsSatisfiedBy(e_sptr)) {
+    if(left_->IsSatisfiedBy(entity) || right_->IsSatisfiedBy(entity)) {
       result = true;
     }
     return result;
@@ -99,21 +99,21 @@ private:
   CSPtr right_;
 };
 
-template<typename EntitySPtr>
-class NotSpecification: public CompositeSpecification<EntitySPtr>
+template<typename Entity>
+class NotSpecification: public CompositeSpecification<Entity>
 {
 public:
-  using SPtr = typename ISpecification<EntitySPtr>::SPtr;
-  using CSPtr = typename ISpecification<EntitySPtr>::CSPtr;
+  using SPtr = typename ISpecification<Entity>::SPtr;
+  using CSPtr = typename ISpecification<Entity>::CSPtr;
 
   NotSpecification() = delete;
   NotSpecification(CSPtr previous): previous_(previous)
   {}
 
-  virtual bool IsSatisfiedBy(EntitySPtr e_sptr) const override
+  virtual bool IsSatisfiedBy(const Entity &entity) const override
   {
     bool result = false;
-    if(!previous_->IsSatisfiedBy(e_sptr)) {
+    if(!previous_->IsSatisfiedBy(entity)) {
       result = true;
     }
     return result;

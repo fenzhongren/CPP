@@ -22,7 +22,7 @@ void TextQuery::Close()
 {
   if(IsOpen()) {
     input_stream.close();
-    file_name_ = std::string("");
+    file_name_ = std::string();
     if(lines_sptr_) {
       lines_sptr_.reset();
     }

@@ -1,4 +1,5 @@
 #include "book.h"
+#include <list>
 
 std::ostream &operator<<(std::ostream &os, const Book &book)
 {
@@ -21,4 +22,19 @@ std::vector<Book::SPtr> BookRepository::Query(ISpecification<Book::SPtr>::SPtr s
     }
   }
   return temp;
+}
+
+void BookRepository::Remove(ISpecification<Book::SPtr>::SPtr spec_sptr)
+{
+  std::list<int> need_to_remove;
+  for(auto it = book_map_.begin(); it != book_map_.end(); ++it) {
+    if(spec_sptr->IsSatisfiedBy(it->second)) {
+      need_to_remove.push_back(it->first);
+    }
+  }
+
+  for(auto key: need_to_remove) {
+    //std::cout << "Removing " << key << std::endl;
+    book_map_.erase(key);
+  }
 }
