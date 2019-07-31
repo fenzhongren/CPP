@@ -24,13 +24,13 @@ public:
 
   virtual bool IsSatisfiedBy(const Entity &) const = 0;
 
-  virtual SPtr And(CSPtr right) const override
+  virtual SPtr And(SPtr right) const override
   {
     return std::make_shared<AndSpecification<Entity>>(this->shared_from_this(),
       right);
   }
 
-  virtual SPtr Or(CSPtr right) const override
+  virtual SPtr Or(SPtr right) const override
   {
     return std::make_shared<OrSpecification<Entity>>(this->shared_from_this(),
       right);

@@ -13,8 +13,8 @@ public:
   ISpecification() = default;
 
   virtual bool IsSatisfiedBy(const Entity &) const = 0;
-  virtual SPtr And(CSPtr) const = 0;
-  virtual SPtr Or(CSPtr) const = 0;
+  virtual SPtr And(SPtr) const = 0;
+  virtual SPtr Or(SPtr) const = 0;
   virtual SPtr Not() const = 0;
 
   virtual ~ISpecification() = default;
