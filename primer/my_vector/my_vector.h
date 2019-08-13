@@ -1,12 +1,14 @@
 #ifndef CPP_LOCAL_TEST_MY_VECTOR_MY_VECTOR_H_
 #define CPP_LOCAL_TEST_MY_VECTOR_MY_VECTOR_H_
 
-#include "../common/my_assert.h"
+#include "my_assert.h"
 
 #include <string>
 #include <memory>
 #include <algorithm>
 #include <initializer_list>
+#include <iostream>
+
 
 template<typename T>
 class MyVector
@@ -62,6 +64,7 @@ public:
   {return at(size()-1);}
 
   void push_back(const T &val);
+  void push_back(T &&val);
   void pop_back();
 
   iterator begin()
@@ -77,19 +80,19 @@ public:
   {return first_free_;}
 
 private:
-  bool HasNAvailable(size_type n) const
+  bool HasNCapacityLeft(size_type n) const
   {
-    size_type left = GetLeftSpace();
+    size_type left = GetLeftCapacity();
     return left >= n;
   }
 
   bool ReAllocate(size_type capacity);
 
-  size_type CalculateNewCapacity(size_type need_space) const;
+  size_type CalculateNewCapacityFromNeededSize(size_type need_size) const;
 
   size_type CalculateNextMultipleOf2Unsigned(size_type val) const;
 
-  size_type GetLeftSpace() const
+  size_type GetLeftCapacity() const
   {
     return capacity() - size();
   }
@@ -108,13 +111,19 @@ private:
     ++first_free_;
   }
 
+  void AddOneToTailSafely(T &&val)
+  {
+    alloc_.construct(first_free_, std::move(val));
+    ++first_free_;
+  }
+
   T RemoveOneFromTailSafely()
   {
     --first_free_;
     alloc_.destroy(first_free_);
   }
 
-  size_type CalculateCapacityFromSize(size_type size)
+  size_type CalculateCapacityFromSize(size_type size) const
   {
     size_type capacity = kMinAlloc;
     if(size >= kMinAlloc) {
@@ -155,13 +164,26 @@ MyVector<T>::MyVector(std::initializer_list<T> il): start_(nullptr),
 template<typename T>
 void MyVector<T>::push_back(const T &val)
 {
-  if(HasNAvailable(1)) {
+  if(HasNCapacityLeft(1)) {
     AddOneToTailSafely(val);
   } else {
-    size_type new_capacity = CalculateNewCapacity(1);
+    size_type new_capacity = CalculateNewCapacityFromNeededSize(1);
     ReAllocate(new_capacity);
-    AssertTrue(HasNAvailable(1), "Can get enough space!");
+    AssertTrue(HasNCapacityLeft(1), "Can get enough space!");
     this->push_back(val);
+  }
+}
+
+template<typename T>
+void MyVector<T>::push_back(T &&val)
+{
+  if(HasNCapacityLeft(1)) {
+    AddOneToTailSafely(std::move(val));
+  } else {
+    size_type new_capacity = CalculateNewCapacityFromNeededSize(1);
+    ReAllocate(new_capacity);
+    AssertTrue(HasNCapacityLeft(1), "Can get enough space!");
+    this->push_back(std::move(val));
   }
 }
 
@@ -195,15 +217,15 @@ bool MyVector<T>::ReAllocate(size_type new_capacity)
 
 template<typename T>
 typename MyVector<T>::size_type 
- MyVector<T>::CalculateNewCapacity(size_type need_space) const
+ MyVector<T>::CalculateNewCapacityFromNeededSize(size_type need_size) const
 {
-  size_type left = GetLeftSpace();
-  if(left >= need_space) {
+  size_type left = GetLeftCapacity();
+  if(left >= need_size) {
     return 0;
   }
 
-  size_type total_capacity = capacity() + need_space;
-  return CalculateNextMultipleOf2Unsigned(total_capacity);
+  size_type total_size = capacity() + need_size;
+  return CalculateCapacityFromSize(total_size);
 }
 
 template<typename T>
