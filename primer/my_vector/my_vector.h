@@ -46,7 +46,10 @@ public:
   {return at(n);}
 
   const T &operator[](size_type n) const
-  {return at(n);}
+  {
+    auto ptr = const_cast<MyVector<T> *>(this);
+    return (*ptr)[n];
+  }
 
   T &at(size_type n);
   const T &at(size_type n) const;
@@ -55,13 +58,19 @@ public:
   {return at(0);}
 
   const T &front() const
-  {return at(0);}
+  {
+    auto ptr = const_cast<MyVector<T> *>(this);
+    return ptr->front();
+  }
 
   T &back()
   {return at(size()-1);}
 
   const T &back() const
-  {return at(size()-1);}
+  {
+    auto ptr = const_cast<MyVector<T> *>(this);
+    return ptr->back();
+  }
 
   void push_back(const T &val);
   void push_back(T &&val);
@@ -99,7 +108,7 @@ private:
 
   void Free(T *start, T *first_free, T *end)
   {
-    for(auto pos = start; pos != start; ++pos) {
+    for(auto pos = start; pos != end; ++pos) {
       alloc_.destroy(pos);
     }
     alloc_.deallocate(start, (end - start));
@@ -169,7 +178,7 @@ void MyVector<T>::push_back(const T &val)
   } else {
     size_type new_capacity = CalculateNewCapacityFromNeededSize(1);
     ReAllocate(new_capacity);
-    AssertTrue(HasNCapacityLeft(1), "Can get enough space!");
+    AssertTrue(HasNCapacityLeft(1), "Can't get enough space!");
     this->push_back(val);
   }
 }
