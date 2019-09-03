@@ -1,14 +1,13 @@
 #ifndef CPP_LOCAL_TEST_MY_VECTOR_MY_VECTOR_H_
 #define CPP_LOCAL_TEST_MY_VECTOR_MY_VECTOR_H_
 
-#include "my_assert.h"
-
 #include <string>
 #include <memory>
 #include <algorithm>
 #include <initializer_list>
 #include <iostream>
 
+#include "my_assert.h"
 
 template<typename T>
 class MyVector
@@ -32,6 +31,12 @@ public:
   }
 
   MyVector(std::initializer_list<T> il);
+  MyVector(const MyVector<T> &rhs);
+  MyVector(MyVector &&rrhs) noexcept;
+  MyVector<T> &operator=(const MyVector<T> &rhs);
+  MyVector<T> &operator=(MyVector<T> &&rrhs) noexcept;
+
+  virtual ~MyVector();
 
   size_type size() const
   {return first_free_ - start_;}
@@ -48,7 +53,7 @@ public:
   const T &operator[](size_type n) const
   {
     auto ptr = const_cast<MyVector<T> *>(this);
-    return (*ptr)[n];
+    return ptr->operator[](n);
   }
 
   T &at(size_type n);
@@ -86,6 +91,12 @@ public:
   {return start_;}
 
   const_iterator end() const
+  {return first_free_;}
+
+  const_iterator cbegin() const
+  {return start_;}
+
+  const_iterator cend() const
   {return first_free_;}
 
 private:
@@ -141,6 +152,15 @@ private:
     return capacity;
   }
 
+  void StealMembersFrom(MyVector<T> &rhs) noexcept
+  {
+    start_ = rhs.start_;
+    first_free_ = rhs.first_free_;
+    end_ = rhs.end_;
+
+    rhs.start_ = rhs.first_free_ =rhs.end_ = nullptr;
+  }
+
   std::allocator<T> alloc_;
   T *start_;
   T *first_free_;
@@ -168,6 +188,64 @@ MyVector<T>::MyVector(std::initializer_list<T> il): start_(nullptr),
   start_ = alloc_.allocate(capacity);
   first_free_ = std::uninitialized_copy(il.begin(), il.end(), start_);
   end_ = start_ + capacity;
+}
+
+template<typename T>
+MyVector<T>::MyVector(const MyVector<T> &rhs): alloc_(rhs.alloc_)
+{
+  std::cout << "Copy constructor" << std::endl;
+  size_type capacity = rhs.capacity();
+
+  start_ = alloc_.allocate(capacity);
+  first_free_ = std::uninitialized_copy(rhs.cbegin(), rhs.cend(), start_);
+  end_ = start_ + capacity;
+}
+
+template<typename T>
+MyVector<T> &MyVector<T>::operator=(const MyVector<T> &rhs)
+{
+  std::cout << "operator=&" << std::endl;
+  alloc_ = rhs.alloc_;
+  size_type capacity = rhs.capacity();
+
+  T *new_start = alloc_.allocate(capacity);
+  T *new_first_free = std::uninitialized_copy(rhs.cbegin(), rhs.cend(),
+   new_start);
+
+  Free(start_, first_free_, end_);
+
+  start_ = new_start;
+  first_free_ = new_first_free;
+  end_ = start_ + capacity;
+
+  return *this;
+}
+
+template<typename T>
+MyVector<T>::MyVector(MyVector<T> &&rrhs) noexcept: alloc_(std::move(rrhs.alloc_))
+{
+  std::cout << "Move constructor" << std::endl;
+  StealMembersFrom(rrhs);
+}
+
+template<typename T>
+MyVector<T> &MyVector<T>::operator=(MyVector<T> &&rrhs) noexcept
+{
+  std::cout << "operator=&&" << std::endl;
+
+  if(this != &rrhs) {
+    alloc_ = std::move(rrhs.alloc_);
+    Free(start_, first_free_, end_);
+    StealMembersFrom(rrhs);
+  }
+
+  return *this;
+}
+
+template<typename T>
+MyVector<T>::~MyVector()
+{
+  Free(start_, first_free_, end_);
 }
 
 template<typename T>
@@ -225,7 +303,7 @@ bool MyVector<T>::ReAllocate(size_type new_capacity)
 }
 
 template<typename T>
-typename MyVector<T>::size_type 
+typename MyVector<T>::size_type
  MyVector<T>::CalculateNewCapacityFromNeededSize(size_type need_size) const
 {
   size_type left = GetLeftCapacity();
