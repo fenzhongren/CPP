@@ -3,23 +3,26 @@
 
 #include <string>
 #include <iostream>
+#include <memory>
 
 class Quote
 {
 public:
+  using SPtr = shared_ptr<Quote>;
+
   Quote() = delete;
   Quote(const std::string &isbn, double price): isbn_(isbn), price_(price)
   {}
 
   Quote(const Quote &rhs): isbn_(rhs.isbn_), price_(rhs.price_)
   {
-    std::cout << "Enter " + get_class_name() + "'s copy constructor"
+    std::cout << "Enter Quote's copy constructor"
      << std::endl;
   }
 
-  Quote &operator=(const Qutoe &rhs)
+  Quote &operator=(const Quote &rhs)
   {
-    std::cout << "Enter " + get_class_name() + "'s operator=&" << std::endl;
+    std::cout << "Enter Quote's operator=&" << std::endl;
     isbn_ = rhs.isbn_;
     price_ = rhs.price_;
     return *this;
@@ -27,13 +30,13 @@ public:
 
   Quote(Quote &&rrhs): isbn_(rrhs.isbn_), price_(rrhs.price_)
   {
-    std::cout << "Enter " + get_class_name() + "'s move constructor"
+    std::cout << "Enter Quote's move constructor"
      << std::endl;
   }
 
-  Quote &operator=(const Qutoe &&rrhs)
+  Quote &operator=(const Quote &&rrhs)
   {
-    std::cout << "Enter " + get_class_name() + "'s operator=&&" << std::endl;
+    std::cout << "Enter Quote's operator=&&" << std::endl;
     isbn_ = rrhs.isbn_;
     price_ = rrhs.price_;
     return *this;
@@ -62,9 +65,16 @@ public:
     return os;
   }
 
-  virtual std::string get_class_name() const
+  virtual Quote *Clone() const &
   {
-    return "Quote";
+    std::cout << "Enter Quote's lvalue clone" << std::endl;
+    return new Quote(*this);
+  }
+
+  virtual Quote *clone() &&
+  {
+    std::cout << "Enter Quote's rvalue clone" << std::endl;
+    return new Quote(std::move(*this));
   }
 
 private:
@@ -81,6 +91,38 @@ public:
     discount_(discount)
   {}
 
+  DiscountQuote(const DiscountQuote &rhs): Quote(rhs), quantity_(rhs.quantity_),
+   discount_(rhs.discount_)
+  {
+    std::cout << "Enter DiscountQuote's copy constructor"
+     << std::endl;
+  }
+
+  DiscountQuote &operator=(const DiscountQuote &rhs)
+  {
+    std::cout << "Enter DiscountQuote's operator=&" << std::endl;
+    Quote::operator=(rhs);
+    quantity_ = rhs.quantity_;
+    discount_ = rhs.discount_;
+
+    return *this;
+  }
+
+  DiscountQuote(DiscountQuote &&rrhs): Quote(std::move(rrhs)),
+   quantity_(rrhs.quantity_), discount_(rrhs.discount_)
+  {
+    std::cout << "Enter DiscountQuote's move constructor"
+     << std::endl;
+  }
+
+  DiscountQuote &operator=(DiscountQuote &&rrhs)
+  {
+    std::cout << "Enter DiscountQuote's operator=&&" << std::endl;
+    Quote::operator=(std::move(rrhs));
+    quantity_ = rrhs.quantity_;
+    discount_ = rrhs.discount_;    
+  }
+
   virtual ~DiscountQuote() = default;
 
   virtual double NetPrice(std::size_t n) const = 0;
@@ -90,6 +132,18 @@ public:
     Quote::Debug(os) << "Quantity: " << quantity_ << " Discount: " << discount_
      << std::endl;
      return os;
+  }
+
+ virtual DiscountQuote *Clone() const &
+  {
+    std::cout << "Enter DiscountQuote's lvalue clone" << std::endl;
+    return new DiscountQuote(*this);
+  }
+
+  virtual DiscountQuote *clone() &&
+  {
+    std::cout << "Enter DiscountQuote's rvalue clone" << std::endl;
+    return new DiscountQuote(std::move(*this));
   }
 
 protected:
@@ -104,6 +158,33 @@ public:
   BulkQuote(const std::string &isbn, double price, std::size_t quantity,
    double discount): DiscountQuote(isbn, price, quantity, discount)
   {}
+
+  BulkQuote(const BulkQuote &rhs): DiscountQuote(rhs)
+  {
+    std::cout << "Enter BulkQuote's copy constructor"
+     << std::endl;
+  }
+
+  BulkQuote &operator=(const BulkQuote &rhs)
+  {
+    std::cout << "Enter BulkQuote's operator=&" << std::endl;
+    DiscountQuote::operator=(rhs);
+
+    return *this;
+  }
+
+  BulkQuote(BulkQuote &&rrhs): DiscountQuote(std::move(rrhs))
+  {
+    std::cout << "Enter BulkQuote's move constructor"
+     << std::endl;
+  }
+
+  BulkQuote &operator=(BulkQuote &&rrhs)
+  {
+    std::cout << "Enter BulkQuote's operator=&&" << std::endl;
+    DiscountQuote::operator=(std::move(rrhs));
+    return *this;
+  }
 
   virtual ~BulkQuote() = default;
 
@@ -121,6 +202,18 @@ public:
     return total;
   }
 
+  virtual BulkQuote *Clone() const &
+  {
+    std::cout << "Enter BulkQuote's lvalue clone" << std::endl;
+    return new BulkQuote(*this);
+  }
+
+  virtual BulkQuote *clone() &&
+  {
+    std::cout << "Enter BulkQuote's rvalue clone" << std::endl;
+    return new BulkQuote(std::move(*this));
+  }
+
 };
 
 class LimitedQuote: public DiscountQuote
@@ -130,6 +223,33 @@ public:
   LimitedQuote(const std::string &isbn, double price, std::size_t quantity,
    double discount): DiscountQuote(isbn, price, quantity, discount)
   {}
+
+  LimitedQuote(const LimitedQuote &rhs): DiscountQuote(rhs)
+  {
+    std::cout << "Enter LimitedQuote's copy constructor"
+     << std::endl;
+  }
+
+  LimitedQuote &operator=(const LimitedQuote &rhs)
+  {
+    std::cout << "Enter LimitedQuote's operator=&" << std::endl;
+    DiscountQuote::operator=(rhs);
+
+    return *this;
+  }
+
+  LimitedQuote(LimitedQuote &&rrhs): DiscountQuote(std::move(rrhs))
+  {
+    std::cout << "Enter LimitedQuote's move constructor"
+     << std::endl;
+  }
+
+  LimitedQuote &operator=(LimitedQuote &&rrhs)
+  {
+    std::cout << "Enter LimitedQuote's operator=&&" << std::endl;
+    DiscountQuote::operator=(std::move(rrhs));
+    return *this;
+  }
 
   virtual ~LimitedQuote() = default;
 
@@ -146,6 +266,19 @@ public:
 
     return total;
   }
+
+  virtual LimitedQuote *Clone() const &
+  {
+    std::cout << "Enter LimitedQuote's lvalue clone" << std::endl;
+    return new LimitedQuote(*this);
+  }
+
+  virtual LimitedQuote *clone() &&
+  {
+    std::cout << "Enter LimitedQuote's rvalue clone" << std::endl;
+    return new LimitedQuote(std::move(*this));
+  }
+
 };
 
 inline double PrintTotal(std::ostream &os, const Quote &item, std::size_t n)

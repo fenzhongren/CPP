@@ -20,5 +20,9 @@ int main()
   PrintTotal(cout, bulk, 7);
   PrintTotal(cout, limited, 5);
 
+  cout << endl << "Copy control test:" << endl;
+  bulk = BulkQuote("dd", 4.65, 8, 0.9);
+  bulk.Debug(cout);
+
   return 0;
 }
