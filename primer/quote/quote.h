@@ -4,11 +4,12 @@
 #include <string>
 #include <iostream>
 #include <memory>
+#include <utility>
 
 class Quote
 {
 public:
-  using SPtr = shared_ptr<Quote>;
+  using SPtr = std::shared_ptr<Quote>;
 
   Quote() = delete;
   Quote(const std::string &isbn, double price): isbn_(isbn), price_(price)
@@ -71,7 +72,7 @@ public:
     return new Quote(*this);
   }
 
-  virtual Quote *clone() &&
+  virtual Quote *Clone() &&
   {
     std::cout << "Enter Quote's rvalue clone" << std::endl;
     return new Quote(std::move(*this));
@@ -132,18 +133,6 @@ public:
     Quote::Debug(os) << "Quantity: " << quantity_ << " Discount: " << discount_
      << std::endl;
      return os;
-  }
-
- virtual DiscountQuote *Clone() const &
-  {
-    std::cout << "Enter DiscountQuote's lvalue clone" << std::endl;
-    return new DiscountQuote(*this);
-  }
-
-  virtual DiscountQuote *clone() &&
-  {
-    std::cout << "Enter DiscountQuote's rvalue clone" << std::endl;
-    return new DiscountQuote(std::move(*this));
   }
 
 protected:
@@ -208,7 +197,7 @@ public:
     return new BulkQuote(*this);
   }
 
-  virtual BulkQuote *clone() &&
+  virtual BulkQuote *Clone() &&
   {
     std::cout << "Enter BulkQuote's rvalue clone" << std::endl;
     return new BulkQuote(std::move(*this));
@@ -273,7 +262,7 @@ public:
     return new LimitedQuote(*this);
   }
 
-  virtual LimitedQuote *clone() &&
+  virtual LimitedQuote *Clone() &&
   {
     std::cout << "Enter LimitedQuote's rvalue clone" << std::endl;
     return new LimitedQuote(std::move(*this));

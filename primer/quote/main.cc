@@ -1,4 +1,5 @@
 #include "quote.h"
+#include "basket.h"
 
 #include <iostream>
 
@@ -23,6 +24,18 @@ int main()
   cout << endl << "Copy control test:" << endl;
   bulk = BulkQuote("dd", 4.65, 8, 0.9);
   bulk.Debug(cout);
+
+  cout << endl << "Basket test: " << endl;
+  Basket basket;
+  for(int i=0; i<2; ++i) {
+    basket.AddItem(bulk);
+    basket.AddItem(BulkQuote("ef", 8.07, 8, 0.80));
+  }
+
+  cout << basket.CalculateTotalReceipt(cout) << endl;
+
+  cout << endl << "test rvalue clone:" << endl;
+  Quote *quote_p = std::move(basic).Clone();
 
   return 0;
 }
