@@ -1,26 +1,32 @@
 #ifndef CPP_PRIMER_SPECIFICATION_ISPECIFICATION_H_
 #define CPP_PRIMER_SPECIFICATION_ISPECIFICATION_H_
 
+#include <memory>
+
+template<typename Entity>
 class ISpecification
 {
 public:
+  using SPtr = std::shared_ptr<ISpecification<Entity>>;
+  using CSPtr = std::shared_ptr<const ISpecification<Entity>>
+
   ISpecification() = default;
 
   ISpecification(const ISpecification &) = delete;
 
   ISpecification &operator=(const ISpecification &) = delete;
 
-  ISpecification And(const ISpecification &lhs, const ISpecification &rhs);
+  SPtr And(CSPtr lhs, CSPtr rhs) = 0;
 
-  ISpecification Or(const ISpecification &lhs, const ISpecification &rhs);
+  SPtr Or(CSPtr lhs, CSPtr rhs) = 0;
 
-  ISpecification Not(const ISpecification &lhs);
+  SPtr Not(CSPtr lhs) = 0;
 
-  bool IsSatisfiedBy() const = 0;
+  bool IsSatisfiedBy(const Entity &val) const = 0;
 
-  bool operator()() const;
+  bool operator()(const Entity &val) const;
   {
-    return IsSatisfiedBy();
+    return IsSatisfiedBy(val);
   }
 
   virtual ~ISpecification() = default;
