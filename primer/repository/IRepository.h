@@ -2,14 +2,14 @@
 #define CPP_PRIMER_REPOSITORY_IREPOSITORY_H_
 
 #include <functional>
-#include <vector>
+#include "my_vector/my_vector.h"
 
 template<Entity>
 class IRepository
 {
 public:
   using Specification = std::function<bool(const Entity &val)>;
-  using EntityList = std::vector<Entity>;
+  using EntityList = MyVector<Entity>;
 
   IRepository() = default;
   IRepository(const IRepository &) = delete;

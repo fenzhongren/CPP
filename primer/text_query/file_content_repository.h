@@ -18,6 +18,8 @@ public:
   using Specification = IRepository<FileContent::SPtr>::Specification;
   using EntityList = IRepository<FileContent::SPtr>::EntityList;
 
+  static FileContentRepository *GetInstance();
+
   FileContentRepository() = default;
 
   void AddItem(const FileContent::SPtr &val)
@@ -30,12 +32,11 @@ public:
     file_contents_[val.file_name_] = std::move(val);
   }
 
-  void RemoveItems(Specification &spec)
-  {
-    
-  }
+  void RemoveItems(Specification &spec);
+
   EntityList Query(Specification &spec);
 
 private:
+  static FileContentRepository *instance_;
   std::map<std::string, FileContent::SPtr> file_contents_;
 };
