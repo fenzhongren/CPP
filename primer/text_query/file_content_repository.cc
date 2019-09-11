@@ -32,3 +32,8 @@ FileContentRepository::EntityList
 
   return std::move(result_list);
 }
+
+FileContentRepository::~FileContentRepository()
+{
+  file_contents_.clear();
+}
