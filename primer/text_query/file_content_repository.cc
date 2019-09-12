@@ -1,19 +1,10 @@
 #include "file_content_repository.h"
 
-static FileContentRepository *FileContentRepository::instance_ = nullptr;
-
-static FileContentRepository *FileContentRepository::GetInstance()
-{
-  if(nullptr == instance_) {
-    instance_ = new FileContentRepository();
-  }
-}
-
 void FileContentRepository::RemoveItems(Specification &spec)
 {
   for(auto it = file_contents_.cbegin(); it != file_contents_.cend(); ) {
     if(spec(it->second)) {
-      it = file_contents_.erase(it->second);
+      it = file_contents_.erase(it);
     } else {
       ++it;
     }

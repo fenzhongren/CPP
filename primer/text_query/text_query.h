@@ -3,69 +3,46 @@
 
 #include <map>
 #include <set>
-#include <vector>
 #include <string>
 #include <iostream>
 #include <memory>
 #include <fstream>
 #include <cassert>
 
+#include "my_vector/my_vector.h"
+#include "file_content_repository.h"
+
 class TextQuery
 {
 public:
-  using FileLinesMap = std::map<int, std::vector<std::string>>;
   
-  TextQuery(): lines_sptr_(nullptr)
-  {}
+  TextQuery(): file_name_(std::string());
   
   TextQuery(const TextQuery &) = delete;
   
   TextQuery &operator=(const TextQuery &) = delete;
   
-  bool Open(const std::string &file_name);
+  void Open(const std::string &file_name);
   
   bool IsOpen() const
-  {return input_stream.is_open();}
-  
-  void Close();
-  
-  class QueryResult
   {
-  public:
-    QueryResult() = delete;
-    explicit QueryResult(const std::string &element): element_(element),
-     lines_sptr_(nullptr), found(false)
-    {}
-    
-    bool Found() const
-    {return found;}
-    
-    void ShowResult() const;
-    
-    virtual ~QueryResult() = default;
-    
-    friend class TextQuery;
-    
-  private:
-    std::string element_;
-    std::shared_ptr<FileLinesMap> lines_sptr_;
-    std::set<int> lines_;
-    bool found;
-  };
+    FileContentSpecificationByFileName spec(file_name_);
+    auto list = FileContentRepository.GetInstance().Query(spec);
+    return !list.empty();
+  }
+  
+  void Close()
+  {
+    FileContentSpecificationByFileName spec(file_name_);
+    FileContentRepository.GetInstance().RemoveItems(spec);
+  }
 
   QueryResult Query(const std::string &element);
 
   virtual ~TextQuery();
   
 private:
-  bool LoadFile();
-
-  bool HasLoadedFile() const
-  {return !(lines_sptr_ == nullptr);}
-
   std::string file_name_;
-  std::ifstream input_stream;
-  std::shared_ptr<FileLinesMap> lines_sptr_;
 };
 
 inline void AssertTrue(bool expr, const std::string &msg,

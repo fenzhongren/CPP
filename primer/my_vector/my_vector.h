@@ -17,7 +17,7 @@ public:
   using iterator = T *;
   using const_iterator = const T *;
 
-  const static size_type kMinAlloc = 16;
+  const static size_type kMinAlloc = 8;
 
   explicit MyVector(size_type size = 0, const T &val = T());
 
