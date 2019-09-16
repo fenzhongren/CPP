@@ -13,13 +13,20 @@ class FileContent
 {
 public:
   using SPtr = std::shared_ptr<FileContent>;
-  explicit FileContent(std::file_name): file_name_(file_name)
+  using LineNumberSetSPtr = std::shared_ptr<std::set<size_t>>;
+  using LineNumberSetCSPtr = std::shared_ptr<const std::set<size_t>>;
+  explicit FileContent(std::file_name): file_name_(file_name),
+   element_in_lines_{16}
   {}
 
-  void AddOneLine(std::size_t line_number, const std::string &content)
+  void AddOneLine(size_t line_number, const std::string &content)
   {
     contents_[line_number] = content;
   }
+
+  const std::string *GetContentByLineNumber(size_t line_number) const;
+
+  LineNumberSetCSPtr FindLinesThatContainElement(const std::string &element);
 
   std::string get_file_name() const
   {
@@ -27,10 +34,11 @@ public:
   }
 
 private:
+  LineNumberSetSPtr SearchElementInFile(const std::string &element);
   std::string file_name_;
-  std::map<std::size_t, std::string> contents_;
-  //std::map<std::string, std::set<std::size_t>> element_in_lines;
-  Cache<std::string, std::set<std::size_t>> element_in_lines
+  std::map<size_t, std::string> contents_;
+
+  Cache<std::string, LineNumberSetSPtr> element_in_lines_
 };
 
 class FileContentRepository: public IRepository<FileContent::SPtr>
