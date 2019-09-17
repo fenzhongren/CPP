@@ -13,10 +13,10 @@ class FileContent
 {
 public:
   using SPtr = std::shared_ptr<FileContent>;
-  using LineNumberSetSPtr = std::shared_ptr<std::set<size_t>>;
-  using LineNumberSetCSPtr = std::shared_ptr<const std::set<size_t>>;
+  using LineNoSetSPtr = std::shared_ptr<std::set<size_t>>;
+  using LineNoSetCSPtr = std::shared_ptr<const std::set<size_t>>;
   explicit FileContent(std::file_name): file_name_(file_name),
-   element_in_lines_{16}
+   element_in_lines_(16)
   {}
 
   void AddOneLine(size_t line_number, const std::string &content)
@@ -26,7 +26,7 @@ public:
 
   const std::string *GetContentByLineNumber(size_t line_number) const;
 
-  LineNumberSetCSPtr FindLinesThatContainElement(const std::string &element);
+  LineNoSetCSPtr FindLinesThatContainElement(const std::string &element);
 
   std::string get_file_name() const
   {
@@ -34,21 +34,22 @@ public:
   }
 
 private:
-  LineNumberSetSPtr SearchElementInFile(const std::string &element);
+  LineNoSetSPtr SearchElementInFile(const std::string &element);
+
   std::string file_name_;
   std::map<size_t, std::string> contents_;
 
-  Cache<std::string, LineNumberSetSPtr> element_in_lines_
+  Cache<std::string, LineNoSetSPtr> element_in_lines_
 };
 
 class FileContentRepository: public IRepository<FileContent::SPtr>
 {
 public:
-  using Specification = IRepository<FileContent::SPtr>::Specification;
-  using EntityList = IRepository<FileContent::SPtr>::EntityList;
+  using Specification = typename IRepository<FileContent::SPtr>::Specification;
+  using EntityList = typename IRepository<FileContent::SPtr>::EntityList;
 
   static FileContentRepository &GetInstance()
-  {semaphores
+  {
     static FileContentRepository instance;
     return instance;
   }
@@ -97,5 +98,5 @@ public:
 
 
 private:
-  std::stting file_name_;
+  std::string file_name_;
 };

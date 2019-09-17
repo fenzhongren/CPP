@@ -9,8 +9,18 @@
 
 void TextQuery::Open(const std::string &file_name)
 {
+  FileContent::SPtr content_sptr = std::make_shared<FileContent>(file_name);
+
   std::ifstream input(file_name);
-  
+  size_t line_no = 1;
+  for(std::string content; std::getline(input, content);) {
+    content_sptr->AddOneLine(line_no, content);
+    ++line_no;
+  }
+
+  FileContentRepository.GetInstance().AddItem(std::move(content_sptr));
+
+  input.close();
 }
 
 void TextQuery::QueryResult::ShowResult() const
