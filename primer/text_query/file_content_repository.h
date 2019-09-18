@@ -13,6 +13,7 @@ class FileContent
 {
 public:
   using SPtr = std::shared_ptr<FileContent>;
+  using WPtr = std::weak_ptr<FileContent>;
   using LineNoSetSPtr = std::shared_ptr<std::set<size_t>>;
   using LineNoSetCSPtr = std::shared_ptr<const std::set<size_t>>;
   explicit FileContent(std::file_name): file_name_(file_name),
@@ -96,6 +97,7 @@ public:
     return result;
   }
 
+  virtual ~FileContentSpecificationByFileName() = default;
 
 private:
   std::string file_name_;

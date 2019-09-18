@@ -12,6 +12,40 @@
 #include "my_vector/my_vector.h"
 #include "file_content_repository.h"
 
+class QueryResult
+{
+  QueryResult() = delete;
+  QueryResult(bool is_found, const std::string &element): elememt_(element),
+   is_found_(is_found)
+  {}
+  virtual ~QueryResult() = default;
+
+  void set_lines(FileContent::LineNoSetSPtr &sptr)
+  {
+    line_no_set_csptr_ = sptr;
+  }
+
+  void set_file_content(FileContent::SPtr &sptr)
+  {
+    file_content_wptr_ = sptr;
+  }
+
+  bool IsFound() const
+  {
+    is_found_;
+  }
+
+  std::ostream &ShowResult(std::ostream &os) const;
+
+  virtual ~QueryResult() = default;
+
+private:
+  bool is_found_ = false;
+  std::string elememt_;
+  FileContent::LineNoSetCSPtr line_no_set_csptr_;
+  FileContent::WPtr file_content_wptr_;
+}
+
 class TextQuery
 {
 public:
@@ -37,7 +71,7 @@ public:
     FileContentRepository.GetInstance().RemoveItems(spec);
   }
 
-  QueryResult Query(const std::string &element);
+  QueryResult Query(const std::string &element) const;
 
   virtual ~TextQuery();
   
