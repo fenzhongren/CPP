@@ -7,7 +7,7 @@
 #include <initializer_list>
 #include <iostream>
 
-#include "my_assert.h"
+#include "common/my_assert.h"
 
 template<typename T>
 class MyVector
@@ -98,6 +98,12 @@ public:
 
   const_iterator cend() const
   {return first_free_;}
+
+  void clear()
+  {
+    Free(start_, first_free_, end_);
+    start_ = first_free_ = end_ = nullptr;
+  }
 
 private:
   bool HasNCapacityLeft(size_type n) const

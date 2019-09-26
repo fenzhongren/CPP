@@ -8,7 +8,7 @@ class ISpecification
 {
 public:
   using SPtr = std::shared_ptr<ISpecification<Entity>>;
-  using CSPtr = std::shared_ptr<const ISpecification<Entity>>
+  using CSPtr = std::shared_ptr<const ISpecification<Entity>>;
 
   ISpecification() = default;
 
@@ -16,15 +16,15 @@ public:
 
   ISpecification &operator=(const ISpecification &) = delete;
 
-  SPtr And(CSPtr lhs, CSPtr rhs) = 0;
+  virtual SPtr And(CSPtr rhs) const = 0;
 
-  SPtr Or(CSPtr lhs, CSPtr rhs) = 0;
+  virtual SPtr Or(CSPtr rhs) const = 0;
 
-  SPtr Not(CSPtr lhs) = 0;
+  virtual SPtr Not() const = 0;
 
-  bool IsSatisfiedBy(const Entity &val) const = 0;
+  virtual bool IsSatisfiedBy(const Entity &val) const = 0;
 
-  bool operator()(const Entity &val) const;
+  bool operator()(const Entity &val) const
   {
     return IsSatisfiedBy(val);
   }

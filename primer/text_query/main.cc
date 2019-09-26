@@ -1,5 +1,6 @@
 #include "text_query.h"
 
+#if 0
 TextQuery::QueryResult func(void)
 {
   TextQuery query;
@@ -7,6 +8,7 @@ TextQuery::QueryResult func(void)
 
   return query.Query("elif");
 }
+#endif
 
 int main()
 {
@@ -20,10 +22,11 @@ int main()
 
   query.Close();
 
+#if 0
   query.Open("./smb");
   query.Query("you").ShowResult();
   query.Query("the").ShowResult();
   query.Close();
-
+#endif
   return 0;
 }

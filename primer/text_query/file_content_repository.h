@@ -1,7 +1,6 @@
 #include "repository/IRepository.h"
 
 #include <string>
-#include <vector>
 #include <map>
 #include <set>
 #include <memory>
@@ -13,10 +12,14 @@ class FileContent
 {
 public:
   using SPtr = std::shared_ptr<FileContent>;
+  using CSPtr = std::shared_ptr<const FileContent>;
   using WPtr = std::weak_ptr<FileContent>;
+  using CWPtr = std::weak_ptr<const FileContent>;
   using LineNoSetSPtr = std::shared_ptr<std::set<size_t>>;
   using LineNoSetCSPtr = std::shared_ptr<const std::set<size_t>>;
-  explicit FileContent(std::file_name): file_name_(file_name),
+  using LineNoSetCWPtr = std::weak_ptr<const std::set<size_t>>;
+
+  explicit FileContent(std::string &file_name): file_name_(file_name),
    element_in_lines_(16)
   {}
 
@@ -40,7 +43,7 @@ private:
   std::string file_name_;
   std::map<size_t, std::string> contents_;
 
-  Cache<std::string, LineNoSetSPtr> element_in_lines_
+  Cache<std::string, LineNoSetSPtr> element_in_lines_;
 };
 
 class FileContentRepository: public IRepository<FileContent::SPtr>
@@ -58,19 +61,19 @@ public:
   FileContentRepository(const FileContentRepository &) = delete;
   FileContentRepository &operator=(const FileContentRepository &) = delete;
 
-  void AddItem(const FileContent::SPtr &val)
+  void AddItem(const FileContent::SPtr &val) override
   {
     file_contents_[val->get_file_name()] = val;
   }
 
-  void AddItem(FileContent::SPtr &&val)
+  void AddItem(FileContent::SPtr &&val) override
   {
     file_contents_[val->get_file_name()] = std::move(val);
   }
 
-  void RemoveItems(Specification &spec);
+  void RemoveItems(Specification &spec) override;
 
-  EntityList Query(Specification &spec);
+  EntityList Query(Specification &spec) override;
 
   virtual ~FileContentRepository();
 
@@ -83,6 +86,8 @@ class FileContentSpecificationByFileName:
  public CompositeSpecification<FileContent::SPtr>
 {
 public:
+  using SPtr = typename CompositeSpecification<FileContent::SPtr>::SPtr;
+  
   FileContentSpecificationByFileName() = delete;
   explicit FileContentSpecificationByFileName(const std::string &file_name):
    CompositeSpecification<FileContent::SPtr>(), file_name_(file_name)

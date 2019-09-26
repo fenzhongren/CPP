@@ -1,14 +1,16 @@
 #include "file_content_repository.h"
 
 #include <algorithm>
+#include <iterator>
+#include <sstream>
 
-using std::string
+using std::string;
 
 const string *FileContent::GetContentByLineNumber(size_t line_number) const
 {
 
   if(contents_.count(line_number)) {
-    return &contents_[line_number];
+    return &(contents_.at(line_number));
   } else {
     return nullptr;
   }
@@ -21,22 +23,23 @@ FileContent::LineNoSetCSPtr
   if(item.first == true) {
     return item.second;
   } else {
-    LineNoSetSPtr lines_sptr = lineSearchElementInFile(element);
+    LineNoSetSPtr lines_sptr = SearchElementInFile(element);
     element_in_lines_.AddItem(element, lines_sptr);
     return lines_sptr;
   }
 }
 
-LineNoSetSPtr FileContent::SearchElementInFile(const std::string &element)
+FileContent::LineNoSetSPtr
+ FileContent::SearchElementInFile(const std::string &element)
 {
-  LineNoSetSPtr lines_sptr = make_shared<std::set<size_t>>();
+  LineNoSetSPtr lines_sptr = std::make_shared<std::set<size_t>>();
 
   for(auto it = contents_.begin(); it != contents_.end(); ++it) {
-    istringstream input(it->second);
-    istream_iterator<char> in_iter(input);
-    istream_iterator<char> eof;
-    auto it = std::find(in_iter, eof, element);
-    if(it != eof) {
+    std::istringstream input(it->second);
+    std::istream_iterator<std::string> in_iter(input);
+    std::istream_iterator<std::string> eof;
+    auto iter = std::find(in_iter, eof, element);
+    if(iter != eof) {
       lines_sptr->insert(it->first);
     }
   }

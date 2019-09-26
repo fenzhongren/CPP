@@ -7,27 +7,25 @@
 #include <iostream>
 #include <memory>
 #include <fstream>
-#include <cassert>
 
-#include "my_vector/my_vector.h"
 #include "file_content_repository.h"
 
 class QueryResult
 {
   QueryResult() = delete;
-  QueryResult(bool is_found, const std::string &element): elememt_(element),
-   is_found_(is_found)
+  QueryResult(bool is_found, const std::string &file_name = "",
+   const std::string element = ""): is_found_(is_found), file_name_(file_name),
+    elememt_(element)
   {}
-  virtual ~QueryResult() = default;
 
-  void set_lines(FileContent::LineNoSetSPtr &sptr)
+  void set_lines(FileContent::LineNoSetCSPtr &csptr)
   {
-    line_no_set_csptr_ = sptr;
+    line_no_set_cwptr_ = csptr;
   }
 
-  void set_file_content(FileContent::SPtr &sptr)
+  void set_file_content(FileContent::CSPtr &csptr)
   {
-    file_content_wptr_ = sptr;
+    file_content_cwptr_ = csptr;
   }
 
   bool IsFound() const
@@ -41,16 +39,17 @@ class QueryResult
 
 private:
   bool is_found_ = false;
+  std::string file_name_;
   std::string elememt_;
-  FileContent::LineNoSetCSPtr line_no_set_csptr_;
-  FileContent::WPtr file_content_wptr_;
-}
+  FileContent::LineNoSetCWPtr line_no_set_cwptr_;
+  FileContent::CWPtr file_content_cwptr_;
+};
 
 class TextQuery
 {
 public:
   
-  TextQuery(): file_name_(std::string());
+  TextQuery() = default;
   
   TextQuery(const TextQuery &) = delete;
   
@@ -60,15 +59,15 @@ public:
   
   bool IsOpen() const
   {
-    FileContentSpecificationByFileName spec(file_name_);
-    auto list = FileContentRepository.GetInstance().Query(spec);
+    auto spec_sptr = GetFileNameSpecification();
+    auto list = FileContentRepository::GetInstance().Query(*spec_sptr);
     return !list.empty();
   }
   
   void Close()
   {
-    FileContentSpecificationByFileName spec(file_name_);
-    FileContentRepository.GetInstance().RemoveItems(spec);
+    auto spec_sptr = GetFileNameSpecification()
+    FileContentRepository::GetInstance().RemoveItems(*spec_sptr);
   }
 
   QueryResult Query(const std::string &element) const;
@@ -76,28 +75,15 @@ public:
   virtual ~TextQuery();
   
 private:
+  FileContentSpecificationByFileName::SPtr GetFileNameSpecification() const
+  {
+    FileContentSpecificationByFileName::SPtr spec_sptr =
+     std::make_shared<FileContentSpecificationByFileName>(file_name_)
+
+    return std::move(spec_sptr);
+  }
+
   std::string file_name_;
 };
-
-inline void AssertTrue(bool expr, const std::string &msg,
- int line_number, const std::string &file_name)
-{
-  if(!expr) {
-    std::cerr << "Error happens in file " << file_name << " line "
-     << line_number << std::endl;
-    std:: cerr << msg << std::endl;
-    assert(0);
-  }
-}
-
-inline void AssertFalse(bool expr, const std::string &msg,
- int line_number, const std::string &file_name)
-{
-  AssertTrue(!expr, msg, line_number, file_name);
-}
-
-#define AssertTrue(expr, msg) AssertTrue(expr, msg, __LINE__, __FILE__)
-
-#define AssertFalse(expr, msg) AssertFalse(expr, msg, __LINE__, __FILE__)
 
 #endif  //CPP_LOCAL_TEST_TEXT_QUERY_TEXT_QUERY_H_
