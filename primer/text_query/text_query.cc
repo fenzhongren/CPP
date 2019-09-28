@@ -65,7 +65,8 @@ void TextQuery::Open(const std::string &file_name)
     ++line_no;
   }
 
-  FileContentRepository::GetInstance().AddItem(std::move(content_sptr));
+  //FileContentRepository::GetInstance().AddItem(std::move(content_sptr));
+  repo.AddItem(std::move(content_sptr));
   input.close();
 }
 

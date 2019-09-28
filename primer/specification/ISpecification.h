@@ -2,6 +2,7 @@
 #define CPP_PRIMER_SPECIFICATION_ISPECIFICATION_H_
 
 #include <memory>
+#include <functional>
 
 template<typename Entity>
 class ISpecification
@@ -27,6 +28,11 @@ public:
   bool operator()(const Entity &val) const
   {
     return IsSatisfiedBy(val);
+  }
+
+  operator std::function<bool(const Entity &val)>() const
+  {
+    return std::function<bool(const Entity &val)>(std::cref(*this));
   }
 
   virtual ~ISpecification() = default;

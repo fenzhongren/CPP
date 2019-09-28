@@ -47,7 +47,7 @@ FileContent::LineNoSetSPtr
   return lines_sptr;
 }
 
-void FileContentRepository::RemoveItems(Specification &spec)
+void FileContentRepository::RemoveItems(const Specification &spec)
 {
   for(auto it = file_contents_.cbegin(); it != file_contents_.cend(); ) {
     if(spec(it->second)) {
@@ -59,7 +59,7 @@ void FileContentRepository::RemoveItems(Specification &spec)
 }
 
 FileContentRepository::EntityList
- FileContentRepository::Query(Specification &spec)
+ FileContentRepository::Query(const Specification &spec)
 {
   EntityList result_list;
   for(auto it = file_contents_.cbegin(); it != file_contents_.cend(); ++it) {

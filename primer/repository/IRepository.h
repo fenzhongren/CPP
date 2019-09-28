@@ -8,7 +8,7 @@ template<typename Entity>
 class IRepository
 {
 public:
-  using Specification = std::function<bool(const Entity &val)>;
+  using Specification = std::function<bool(const Entity &)>;
   using EntityList = MyVector<Entity>;
 
   IRepository() = default;
@@ -17,8 +17,8 @@ public:
 
   virtual void AddItem(const Entity &val) = 0;
   virtual void AddItem(Entity &&val) = 0;
-  virtual void RemoveItems(Specification &spec) = 0;
-  virtual EntityList Query(Specification &spec) = 0;
+  virtual void RemoveItems(const Specification &spec) = 0;
+  virtual EntityList Query(const Specification &spec) = 0;
 
   virtual ~IRepository() = default;
 };

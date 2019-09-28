@@ -66,7 +66,7 @@ public:
   
   void Close()
   {
-    auto spec_sptr = GetFileNameSpecification()
+    auto spec_sptr = GetFileNameSpecification();
     FileContentRepository::GetInstance().RemoveItems(*spec_sptr);
   }
 
@@ -78,7 +78,7 @@ private:
   FileContentSpecificationByFileName::SPtr GetFileNameSpecification() const
   {
     FileContentSpecificationByFileName::SPtr spec_sptr =
-     std::make_shared<FileContentSpecificationByFileName>(file_name_)
+     std::make_shared<FileContentSpecificationByFileName>(file_name_);
 
     return std::move(spec_sptr);
   }

@@ -71,9 +71,9 @@ public:
     file_contents_[val->get_file_name()] = std::move(val);
   }
 
-  void RemoveItems(Specification &spec) override;
+  void RemoveItems(const Specification &spec) override;
 
-  EntityList Query(Specification &spec) override;
+  EntityList Query(const Specification &spec) override;
 
   virtual ~FileContentRepository();
 

@@ -27,36 +27,46 @@ private:
   int number_;
 };
 
-class TestGreaterThan: public CompositeSpecification<Test>
+class TestGreaterThan: public CompositeSpecification<Test::SPtr>
 {
 public:
-  explicit TestGreaterThan(int num): nunber_(num)
+  using SPtr = typename CompositeSpecification<Test::SPtr>::SPtr;
+
+  explicit TestGreaterThan(int num): CompositeSpecification<Test::SPtr>(),
+   nunber_(num)
   {}
 
-  virtual bool IsSatisfiedBy(const Test &val) const override
+  virtual bool IsSatisfiedBy(const Test::SPtr &val) const override
   {
-    return val.get_number() > nunber_;
+    return val->get_number() > nunber_;
   }
 
 private:
   int nunber_;
 };
 
-class TestLessThan: public CompositeSpecification<Test>
+class TestLessThan: public CompositeSpecification<Test::SPtr>
 {
 public:
-  explicit TestLessThan(int num): nunber_(num)
+  using SPtr = typename CompositeSpecification<Test::SPtr>::SPtr;
+
+  explicit TestLessThan(int num): CompositeSpecification<Test::SPtr>(),
+   nunber_(num)
   {}
 
-  virtual bool IsSatisfiedBy(const Test &val) const override
+  virtual bool IsSatisfiedBy(const Test::SPtr &val) const override
   {
-    return val.get_number() < nunber_;
+    return val->get_number() < nunber_;
   }
 
 private:
   int nunber_;
 };
 
+
+/*
+ * Test repository
+ */
 
 template<typename Entity>
 class Repository
@@ -70,7 +80,12 @@ public:
     vec_.push_back(val);
   }
 
-  MyVector<Entity> Query(const Specification &spec)
+  void AddItem(Entity &&val)
+  {
+    vec_.push_back(std::move(val));
+  }
+
+  MyVector<Entity> Query(const Specification &spec);
 
   virtual ~Repository();
 
@@ -83,13 +98,13 @@ MyVector<Entity> Repository<Entity>::Query(const Specification &spec)
 {
   MyVector<Entity> result;
 
-  for(it = vec_.cbegin(); it!=vec_.cend(); ++it) {
+  for(auto it = vec_.cbegin(); it!=vec_.cend(); ++it) {
     if(spec(*it)) {
       result.push_back(*it);
     }
   }
 
-  return std::move(result)
+  return std::move(result);
 }
 
 template<typename Entity>
@@ -98,3 +113,21 @@ Repository<Entity>::~Repository()
   vec_.clear();
 }
 
+int main()
+{
+  Repository<Test::SPtr> repo;
+  for(int i=0; i<10; ++i) {
+    repo.AddItem(std::make_shared<Test>(i));
+  }
+
+  TestGreaterThan::SPtr spec = std::make_shared<TestGreaterThan>(5);
+
+  //auto list = repo.Query([](const Test::SPtr &val){return true;});
+  auto list = repo.Query(*spec);
+
+  for(auto val: list) {
+    cout << val->get_number() << endl;
+  }
+
+  return 0;
+}
