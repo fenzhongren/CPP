@@ -12,18 +12,19 @@
 
 class QueryResult
 {
+public:
   QueryResult() = delete;
   QueryResult(bool is_found, const std::string &file_name = "",
    const std::string element = ""): is_found_(is_found), file_name_(file_name),
     elememt_(element)
   {}
 
-  void set_lines(FileContent::LineNoSetCSPtr &csptr)
+  void set_lines(const FileContent::LineNoSetCSPtr &csptr)
   {
     line_no_set_cwptr_ = csptr;
   }
 
-  void set_file_content(FileContent::CSPtr &csptr)
+  void set_file_content(const FileContent::CSPtr &csptr)
   {
     file_content_cwptr_ = csptr;
   }

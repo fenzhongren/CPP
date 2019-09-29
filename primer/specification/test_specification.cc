@@ -85,7 +85,7 @@ public:
     vec_.push_back(std::move(val));
   }
 
-  MyVector<Entity> Query(const Specification &spec);
+  MyVector<Entity> Query(Specification spec);
 
   virtual ~Repository();
 
@@ -94,7 +94,7 @@ private:
 };
 
 template<typename Entity>
-MyVector<Entity> Repository<Entity>::Query(const Specification &spec)
+MyVector<Entity> Repository<Entity>::Query(Specification spec)
 {
   MyVector<Entity> result;
 
@@ -120,10 +120,10 @@ int main()
     repo.AddItem(std::make_shared<Test>(i));
   }
 
-  TestGreaterThan::SPtr spec = std::make_shared<TestGreaterThan>(5);
+  //estGreaterThan::SPtr spec = std::make_shared<TestGreaterThan>(5);
 
-  //auto list = repo.Query([](const Test::SPtr &val){return true;});
-  auto list = repo.Query(*spec);
+  auto list = repo.Query([](const Test::SPtr &val){return true;});
+  //auto list = repo.Query(*spec);
 
   for(auto val: list) {
     cout << val->get_number() << endl;

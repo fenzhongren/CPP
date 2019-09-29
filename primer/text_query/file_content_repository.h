@@ -1,50 +1,9 @@
 #include "repository/IRepository.h"
 
 #include <string>
-#include <map>
-#include <set>
 #include <memory>
 
 #include "specification/composite_specification.h"
-#include "common/cache.h"
-
-class FileContent
-{
-public:
-  using SPtr = std::shared_ptr<FileContent>;
-  using CSPtr = std::shared_ptr<const FileContent>;
-  using WPtr = std::weak_ptr<FileContent>;
-  using CWPtr = std::weak_ptr<const FileContent>;
-  using LineNoSetSPtr = std::shared_ptr<std::set<size_t>>;
-  using LineNoSetCSPtr = std::shared_ptr<const std::set<size_t>>;
-  using LineNoSetCWPtr = std::weak_ptr<const std::set<size_t>>;
-
-  explicit FileContent(std::string &file_name): file_name_(file_name),
-   element_in_lines_(16)
-  {}
-
-  void AddOneLine(size_t line_number, const std::string &content)
-  {
-    contents_[line_number] = content;
-  }
-
-  const std::string *GetContentByLineNumber(size_t line_number) const;
-
-  LineNoSetCSPtr FindLinesThatContainElement(const std::string &element);
-
-  std::string get_file_name() const
-  {
-    return file_name_;
-  }
-
-private:
-  LineNoSetSPtr SearchElementInFile(const std::string &element);
-
-  std::string file_name_;
-  std::map<size_t, std::string> contents_;
-
-  Cache<std::string, LineNoSetSPtr> element_in_lines_;
-};
 
 class FileContentRepository: public IRepository<FileContent::SPtr>
 {
@@ -93,7 +52,7 @@ public:
    CompositeSpecification<FileContent::SPtr>(), file_name_(file_name)
   {}
 
-  bool IsSatisfiedBy(const FileContent::SPtr &s_ptr)
+  virtual bool IsSatisfiedBy(const FileContent::SPtr &s_ptr) const override
   {
     bool result = false;
     if(s_ptr->get_file_name() == file_name_) {

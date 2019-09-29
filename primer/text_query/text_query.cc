@@ -9,12 +9,12 @@
 
 std::ostream &QueryResult::ShowResult(std::ostream &os) const
 {
-  if(!IsFound) {
+  if(!IsFound()) {
     return os;
   }
 
   FileContent::CSPtr file_content_csptr = file_content_cwptr_.lock();
-  if(!file_content_sptr) {
+  if(!file_content_csptr) {
     os << "Can't find file content, maybe file " << file_name_ <<
      " has closed" << std::endl;
     return os;
@@ -34,12 +34,12 @@ std::ostream &QueryResult::ShowResult(std::ostream &os) const
     return os;
   }
 
-  os << elememt_ << " occurs " << time << (time > 1 ? " times" : " time")
+  os << elememt_ << " occurs " << times << (times > 1 ? " times" : " time")
    << std::endl;
   for(auto it = line_no_set_csptr_->begin(); it != line_no_set_csptr_->end();
    ++it) {
     os << "    (line " << *it <<") " << 
-     *(file_content_sptr->GetContentByLineNumber(*it)) << std::endl;
+     *(file_content_csptr->GetContentByLineNumber(*it)) << std::endl;
   }
 
   return os;
@@ -65,14 +65,13 @@ void TextQuery::Open(const std::string &file_name)
     ++line_no;
   }
 
-  //FileContentRepository::GetInstance().AddItem(std::move(content_sptr));
-  repo.AddItem(std::move(content_sptr));
+  FileContentRepository::GetInstance().AddItem(std::move(content_sptr));
   input.close();
 }
 
 QueryResult TextQuery::Query(const std::string &element) const
 {
-  auto spec_sptr = GetFileNameSpecification()
+  auto spec_sptr = GetFileNameSpecification();
   auto file_content_list =
    FileContentRepository::GetInstance().Query(*spec_sptr);
   if(file_content_list.empty()) {
@@ -80,14 +79,14 @@ QueryResult TextQuery::Query(const std::string &element) const
   }
 
   FileContent::SPtr content_sptr = file_content_list.front();
-  FileContent::LineNoSetCSPtr =
+  FileContent::LineNoSetCSPtr line_no_set_csptr =
    content_sptr->FindLinesThatContainElement(element);
 
-  QueryResult result = QueryResult(true, file_name_, elenent);
-  result.set_lines(LineNoSetCSPtr);
+  QueryResult result = QueryResult(true, file_name_, element);
+  result.set_lines(line_no_set_csptr);
   result.set_file_content(content_sptr);
 
-  return result;
+  return std::move(result);
 }
 
 TextQuery::~TextQuery()

@@ -1,5 +1,10 @@
 #include "text_query.h"
 
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
 #if 0
 TextQuery::QueryResult func(void)
 {
@@ -16,9 +21,9 @@ int main()
   TextQuery query;
   query.Open("./bashrc");
 
-  query.Query("elif").ShowResult();
-  query.Query("this").ShowResult();
-  query.Query("zejunx").ShowResult();
+  query.Query("elif").ShowResult(cout) << endl;
+  query.Query("this").ShowResult(cout) << endl;;
+  query.Query("zejunx").ShowResult(cout) << endl;
 
   query.Close();
 
