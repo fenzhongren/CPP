@@ -1,6 +1,8 @@
 #include "file_content.h"
 
 #include <sstream>
+#include <iterator>
+#include <iostream>
 
 using std::string;
 
@@ -34,8 +36,8 @@ FileContent::LineNoSetSPtr
 
   for(auto it = contents_.begin(); it != contents_.end(); ++it) {
     std::istringstream input(it->second);
-    std::istream_iterator<std::string> in_iter(input);
-    std::istream_iterator<std::string> eof;
+    std::istream_iterator<string> in_iter(input);
+    std::istream_iterator<string> eof;
     auto iter = std::find(in_iter, eof, element);
     if(iter != eof) {
       lines_sptr->insert(it->first);
@@ -43,4 +45,9 @@ FileContent::LineNoSetSPtr
   }
 
   return lines_sptr;
+}
+
+FileContent::~FileContent()
+{
+  std::cout << "destructor file " << file_name_ << std::endl;
 }

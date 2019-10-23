@@ -85,7 +85,7 @@ public:
     vec_.push_back(std::move(val));
   }
 
-  MyVector<Entity> Query(Specification spec);
+  MyVector<Entity> Query(const Specification &spec);
 
   virtual ~Repository();
 
@@ -94,7 +94,7 @@ private:
 };
 
 template<typename Entity>
-MyVector<Entity> Repository<Entity>::Query(Specification spec)
+MyVector<Entity> Repository<Entity>::Query(const Specification &spec)
 {
   MyVector<Entity> result;
 

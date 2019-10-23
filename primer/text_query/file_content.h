@@ -37,6 +37,8 @@ public:
     return file_name_;
   }
 
+  virtual ~FileContent();
+
 private:
   LineNoSetSPtr SearchElementInFile(const std::string &element);
 
