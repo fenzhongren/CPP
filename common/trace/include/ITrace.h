@@ -1,19 +1,13 @@
 #ifndef CPP_COMMON_TRACE_ITRACE_H_
 #define CPP_COMMON_TRACE_ITRACE_H_
 
-class enum TraceLevel {
-  kError;
-  kWarn;
-  kInfo;
-  kDebug;
+enum class TraceLevel {
+  kError,
+  kWarn,
+  kInfo,
+  kDebug,
   kNone
 };
-
-struct TraceObj
-{
-  const char *obj_str_;
-};
-
 
 class ITrace
 {

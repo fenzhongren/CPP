@@ -33,13 +33,15 @@ namespace {
 ITrace &ITrace::GetInstance()
 {
   static TraceV1 instance;
-  return instance
+  return instance;
 }
 
-void TraceV1::Init()
+void TraceV1::AddTraceObj(const char *obj_str, TraceLevel level)
 {
-  AddTraceObj("Test1", ERROR);
-  AddTraceObj("Test2", INFO);
+  std::string obj = obj_str;
+  enabled_objects_[obj] = level;
+  std::cout << "Add trace obj: " << obj << ", Level: " << Level2Str(level)
+   << std::endl;
 }
 
 void TraceV1::Print(const char *obj_str, TraceLevel level,
@@ -54,14 +56,17 @@ void TraceV1::Print(const char *obj_str, TraceLevel level,
   std::string content = GetString(fmt, ap);
   va_end(ap);
 
-  std::cout << Level2Str(level) << ": " << content << std::endl;
+  std::cout << obj_str << " " << Level2Str(level) << ": " << content
+   << std::endl;
 }
 
-bool TraceV1::IsTraceEnabled(const std::string &obj_str, TraceLevel level) const
+bool TraceV1::IsTraceEnabled(const std::string &obj, TraceLevel level) const
 {
   bool result = false;
-  if(enabled_objects_.count(obj_str)) {
-    if(enabled_objects_[obj_str] <= level) {
+  if(enabled_objects_.count(obj)) {
+    if(level <= enabled_objects_.at(obj)) {
+      //std::cout << "Find trace obj: " << obj << ", Level: " <<
+       //Level2Str(enabled_objects_.at(obj)) << std::endl;
       result = true;
     }
   }
