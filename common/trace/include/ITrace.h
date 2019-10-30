@@ -19,6 +19,7 @@ public:
    const char *fmt, ...) const = 0;
 
   virtual void AddTraceObj(const char *obj_str, TraceLevel level) = 0;
+  virtual void AddTraceObjByXml(const char *file_path) = 0;
 };
 
 #endif  //CPP_COMMON_TRACE_ITRACE_H_

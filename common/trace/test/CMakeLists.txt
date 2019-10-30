@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.9)
 
 project("test trace")
 
+add_definitions(-DLOCAL_TEST -DTEST)
+
 set(BIN_DIR ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../src" ${BIN_DIR}/src)

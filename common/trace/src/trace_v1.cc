@@ -28,9 +28,12 @@ namespace {
 
     return std::move(result);
   }
+
+  constexpr ssize_t kBufSize = 1024;
+
 };
 
-ITrace &ITrace::GetInstance()
+ITrace &::ITrace::GetInstance()
 {
   static TraceV1 instance;
   return instance;
@@ -47,16 +50,18 @@ void TraceV1::AddTraceObj(const char *obj_str, TraceLevel level)
 void TraceV1::Print(const char *obj_str, TraceLevel level,
    const char *fmt, ...) const
 {
+  static thread_local char buf[kBufSize];
+
   if(!IsTraceEnabled(obj_str, level)) {
     return;
   }
 
   va_list ap;
   va_start(ap, fmt);
-  std::string content = GetString(fmt, ap);
+  vsnprintf(buf, kBufSize, fmt, ap);
   va_end(ap);
 
-  std::cout << obj_str << " " << Level2Str(level) << ": " << content
+  std::cout << obj_str << " " << Level2Str(level) << ": " << buf
    << std::endl;
 }
 

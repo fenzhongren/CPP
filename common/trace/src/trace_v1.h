@@ -18,8 +18,10 @@ public:
 
   void Init() override
   {
+#ifdef LOCAL_TEST
     AddTraceObj("Test1", TraceLevel::kError);
     AddTraceObj("Test2", TraceLevel::kInfo);
+#endif
   }
 
   void AddTraceObj(const char *obj_str, TraceLevel level) override;
@@ -28,18 +30,9 @@ public:
    const char *fmt, ...) const override;
 
 private:
-  constexpr static size_t kBufSize = 64;
-
-  std::string GetString(const char *fmt, va_list ap) const
-  {
-    char buf[kBufSize];
-    vsnprintf(buf, kBufSize, fmt, ap);
-    return std::move(std::string(buf));
-  }
 
   bool IsTraceEnabled(const std::string &obj, TraceLevel level) const;
 
   std::map<std::string, TraceLevel> enabled_objects_;
 };
-
 #endif  //CPP_COMMON_TRACE_TRACE_V1_H_
