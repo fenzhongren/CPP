@@ -3,32 +3,10 @@
 #include <iostream>
 #include <stdio.h>
 
+#include "tinyxml.h"
+
 namespace {
-  std::string Level2Str(TraceLevel level)
-  {
-    std::string result;
-
-    switch(level) {
-    case TraceLevel::kError:
-      result = "ERROR";
-      break;
-    case TraceLevel::kWarn:
-      result = "WARN";
-      break;
-    case TraceLevel::kInfo:
-      result = "INFO";
-      break;
-    case TraceLevel::kDebug:
-      result = "DEBUG";
-      break;
-    default:
-      result = "NONE";
-      break;
-    }
-
-    return std::move(result);
-  }
-
+  
   constexpr ssize_t kBufSize = 1024;
 
 };
@@ -77,4 +55,16 @@ bool TraceV1::IsTraceEnabled(const std::string &obj, TraceLevel level) const
   }
 
   return result;
+}
+
+void TraceV1::AddTraceObjByXml(const char *file_path)
+{
+  TiXmlDocument doc(file_path);
+  bool load_ok = doc.LoadFile();
+  if(!load_ok) {
+    std::cerr << "Can't load configure file: " << file_path << std::endl;
+    std::cerr << "Please check your configure file!" << std::endl;
+  }
+
+  
 }

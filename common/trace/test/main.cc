@@ -3,7 +3,6 @@
 DECLARE_TRACEOBJ(Test1);
 DECLARE_TRACEOBJ(Test2);
 
-
 int main()
 {
   init_trace();

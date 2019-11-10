@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<configs>
+  <TraceObjs>
+    <TraceObj>
+      <name>Test1</name>
+      <level>ERROR</level>
+    </TraceObj>
+    <TraceObj>
+      <name>Test2</name>
+      <level>INFO</level>
+    </TraceObj>
+  </TraceObjs>
+</configs>

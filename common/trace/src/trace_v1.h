@@ -18,7 +18,7 @@ public:
 
   void Init() override
   {
-#ifdef LOCAL_TEST
+#ifdef UNIT_TEST
     AddTraceObj("Test1", TraceLevel::kError);
     AddTraceObj("Test2", TraceLevel::kInfo);
 #endif
@@ -29,10 +29,12 @@ public:
   void Print(const char *obj_str, TraceLevel level,
    const char *fmt, ...) const override;
 
+  void AddTraceObjByXml(const char *file_path) override;
+
 private:
 
   bool IsTraceEnabled(const std::string &obj, TraceLevel level) const;
 
-  std::map<std::string, TraceLevel> enabled_objects_;
+  ITrace::ObjLevelMap enabled_objects_;
 };
 #endif  //CPP_COMMON_TRACE_TRACE_V1_H_

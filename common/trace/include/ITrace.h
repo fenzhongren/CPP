@@ -1,6 +1,9 @@
 #ifndef CPP_COMMON_TRACE_ITRACE_H_
 #define CPP_COMMON_TRACE_ITRACE_H_
 
+#include <map>
+#include <string>
+
 enum class TraceLevel {
   kError,
   kWarn,
@@ -12,6 +15,7 @@ enum class TraceLevel {
 class ITrace
 {
 public:
+  using ObjLevelMap = std::map<std::string, TraceLevel>;
   static ITrace &GetInstance();
 
   virtual void Init() = 0;
