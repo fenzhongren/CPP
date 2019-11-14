@@ -7,8 +7,10 @@ class XmlHelper
 {
 public:
   XmlHelper() = default;
+  XmlHelper(const XmlHelper&) = delete;
+  XmlHelper &operator=(const XmlHelper&) = delete;
 
-  const ITrace::ObjLevelMap& GetConfigure() const
+  const ITrace::ObjLevelMap& GetConfigures() const
   {
     return obj_level_map_;
   }
@@ -26,6 +28,8 @@ public:
   bool LoadConfigureFile(const char *path);
 
   bool SaveConfigureFile(const char *path);
+
+  virtual ~XmlHelper() = default;
 
 private:
   ITrace::ObjLevelMap obj_level_map_;

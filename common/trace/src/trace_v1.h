@@ -6,6 +6,7 @@
 #include <utility>
 #include <map>
 #include <string>
+#include <iostream>
 
 #include <stdarg.h>
 
@@ -30,6 +31,8 @@ public:
    const char *fmt, ...) const override;
 
   void AddTraceObjByXml(const char *file_path) override;
+
+  std::ostream& Dump(std::ostream &os) const override;
 
 private:
 

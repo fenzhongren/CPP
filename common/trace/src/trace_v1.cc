@@ -1,9 +1,8 @@
 #include "trace_v1.h"
 
-#include <iostream>
 #include <stdio.h>
 
-#include "tinyxml.h"
+#include "xml_helper.h"
 
 namespace {
   
@@ -11,7 +10,7 @@ namespace {
 
 };
 
-ITrace &::ITrace::GetInstance()
+ITrace& ITrace::GetInstance()
 {
   static TraceV1 instance;
   return instance;
@@ -59,12 +58,23 @@ bool TraceV1::IsTraceEnabled(const std::string &obj, TraceLevel level) const
 
 void TraceV1::AddTraceObjByXml(const char *file_path)
 {
-  TiXmlDocument doc(file_path);
-  bool load_ok = doc.LoadFile();
+  XmlHelper helper;
+  bool load_ok = helper.LoadConfigureFile(file_path);
   if(!load_ok) {
     std::cerr << "Can't load configure file: " << file_path << std::endl;
-    std::cerr << "Please check your configure file!" << std::endl;
+    return;
   }
 
-  
+  for(auto it=helper.GetConfigures().cbegin();
+   it!=helper.GetConfigures().cend(); ++it) {
+    AddTraceObj(it->first.c_str(), it->second);
+  }
+}
+
+std::ostream& TraceV1::Dump(std::ostream &os) const
+{
+  for(auto it=enabled_objects_.cbegin(); it!=enabled_objects_.cend(); ++it) {
+    os << it->first << " = " << Level2Str(it->second) << std::endl;
+  }
+  return os;
 }

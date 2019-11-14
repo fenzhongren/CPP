@@ -3,14 +3,26 @@
 
 #include "ITrace.h"
 
+#include <iostream>
+
 struct TraceObj
 {
   const char *obj_str_;
 };
 
-inline void init_trace()
+inline void InitTrace()
 {
   ITrace::GetInstance().Init();
+}
+
+inline void AddConfigures2Trace(const char* path)
+{
+  ITrace::GetInstance().AddTraceObjByXml(path);
+}
+
+inline void DumpTrace()
+{
+  ITrace::GetInstance().Dump(std::cout);
 }
 
 #define ERROR   TraceLevel::kError
@@ -20,7 +32,7 @@ inline void init_trace()
 #define NONE    TraceLevel::kNone
 
 #define DECLARE_TRACEOBJ(obj)  \
-  static TraceObj trace_obj##obj = {.obj_str_ = #obj}
+  static TraceObj trace_obj##obj __attribute__((unused)) = {.obj_str_ = #obj} 
 
 #define TRACE_ERROR(obj, fmt, args...) \
   ITrace::GetInstance().Print(trace_obj##obj.obj_str_, ERROR, fmt, args)

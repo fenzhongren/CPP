@@ -16,5 +16,5 @@ set(DIR_SRCS ${DIR_SRCS} xml_helper.cc trace.cc)
 
 add_library(trace ${DIR_SRCS})
 target_include_directories(trace PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include")
-target_include_directories(trace PUBLIC "${BIN_DIR}/utils/tinyxml/include")
+target_include_directories(trace PUBLIC "${ROOT_DIR}/utils/tinyxml/include")
 target_link_libraries(trace tinyxml)

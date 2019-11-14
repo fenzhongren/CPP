@@ -2,12 +2,12 @@
 <configs>
   <TraceObjs>
     <TraceObj>
-      <name>Test1</name>
-      <level>ERROR</level>
+      <name>Test3</name>
+      <level>WARN</level>
     </TraceObj>
     <TraceObj>
-      <name>Test2</name>
-      <level>INFO</level>
+      <name>Test4</name>
+      <level>DEBUG</level>
     </TraceObj>
   </TraceObjs>
 </configs>

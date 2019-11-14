@@ -1,4 +1,4 @@
-#include "xml_help.h"
+#include "xml_helper.h"
 
 #include <iostream>
 
@@ -16,7 +16,7 @@ bool XmlHelper::LoadConfigureFile(const char *path)
   TiXmlElement* p_elem;
 
 
-  p_elem = h_doc.FirstChildElement("configs").Element();
+  p_elem = h_doc.FirstChildElement().Element();
   if(!p_elem) {
     std::cerr << "Config file: " << *path << " is invalid" << std::endl;
     return false;
@@ -31,13 +31,22 @@ bool XmlHelper::LoadConfigureFile(const char *path)
   }
 
   obj_level_map_.clear();
-  for(p_trace_obj; p_trace_obj; p_trace_obj=p_trace_obj->NextSiblingElement()) {
+  for(; p_trace_obj; p_trace_obj=p_trace_obj->NextSiblingElement()) {
     TiXmlHandle h_trace_obj(p_trace_obj);
-    TiXmlElement* p_name = h_trace_obj.FirstChild("name");
-    TiXmlElement* p_level = h_trace_obj.FirstChild("level");
+    TiXmlElement* p_name = h_trace_obj.FirstChild("name").Element();
+    TiXmlElement* p_level = h_trace_obj.FirstChild("level").Element();
     if(!p_name || !p_level) {
       continue;
     }
-
+    const char *name = p_name->GetText();
+    const char *level = p_level->GetText();
+    obj_level_map_[std::string(name)] = Str2Level(level);
   }
+
+  return true;
+}
+
+bool XmlHelper::SaveConfigureFile(const char *path)
+{
+  return true;
 }
