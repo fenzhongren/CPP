@@ -6,14 +6,9 @@
 
 using std::string;
 
-const string *FileContent::GetContentByLineNumber(size_t line_number) const
+const string& FileContent::GetContentByLineNumber(size_t line_number) const
 {
-
-  if(contents_.count(line_number)) {
-    return &(contents_.at(line_number));
-  } else {
-    return nullptr;
-  }
+  return contents_.at(line_number);
 }
 
 FileContent::LineNoSetCSPtr 

@@ -28,7 +28,7 @@ public:
     contents_[line_number] = content;
   }
 
-  const std::string *GetContentByLineNumber(size_t line_number) const;
+  const std::string& GetContentByLineNumber(size_t line_number) const;
 
   LineNoSetCSPtr FindLinesThatContainElement(const std::string &element);
 

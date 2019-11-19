@@ -27,7 +27,8 @@ public:
 
   void AddItem(FileContent::SPtr &&val) override
   {
-    file_contents_[val->get_file_name()] = std::move(val);
+    std::string file_name = val->get_file_name();
+    file_contents_[file_name] = std::move(val);
   }
 
   void RemoveItems(const Specification &spec) override;

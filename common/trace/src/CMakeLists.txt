@@ -1,6 +1,7 @@
 set(USE_TRACE_V1 ON CACHE BOOL "Enable trace version 1")
 set(USE_TRACE_V2 OFF CACHE BOOL "Enable trace version 2")
 
+add_definitions(-DTIXML_USE_STL)
 add_subdirectory(${ROOT_DIR}/utils/tinyxml ${BIN_DIR}/tinyxml)
 
 if (USE_TRACE_V1)
