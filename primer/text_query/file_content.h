@@ -15,9 +15,7 @@ public:
   using CSPtr = std::shared_ptr<const FileContent>;
   using WPtr = std::weak_ptr<FileContent>;
   using CWPtr = std::weak_ptr<const FileContent>;
-  using LineNoSetSPtr = std::shared_ptr<std::set<size_t>>;
   using LineNoSetCSPtr = std::shared_ptr<const std::set<size_t>>;
-  using LineNoSetCWPtr = std::weak_ptr<const std::set<size_t>>;
 
   explicit FileContent(const std::string &file_name): file_name_(file_name),
    element_in_lines_(16)
@@ -40,12 +38,14 @@ public:
   virtual ~FileContent();
 
 private:
-  LineNoSetSPtr SearchElementInFile(const std::string &element);
+  using LineNoSetSPtr = std::shared_ptr<std::set<size_t>>;
+
+  LineNoSetCSPtr SearchElementInFile(const std::string &element) const;
 
   std::string file_name_;
   std::map<size_t, std::string> contents_;
 
-  Cache<std::string, LineNoSetSPtr> element_in_lines_;
+  Cache<std::string, LineNoSetCSPtr> element_in_lines_;
 };
 
 #endif  //CPP_PRIMER_TEXT_QUERY_FILE_CONTENT_H_

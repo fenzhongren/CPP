@@ -26,7 +26,7 @@ public:
   void AddItem(const key_type &key, const mapped_type &value);
   std::pair<bool, mapped_type> GetItem(const key_type &key);
 
-  std::ostream &Debug(std::ostream &os) const
+  std::ostream& Debug(std::ostream& os) const
   {
     for(auto it = content_.cbegin(); it != content_.cend(); ++it) {
       os << it->first << " ";

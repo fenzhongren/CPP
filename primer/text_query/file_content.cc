@@ -18,14 +18,14 @@ FileContent::LineNoSetCSPtr
   if(item.first == true) {
     return item.second;
   } else {
-    LineNoSetSPtr lines_sptr = SearchElementInFile(element);
-    element_in_lines_.AddItem(element, lines_sptr);
+    LineNoSetCSPtr lines_csptr = SearchElementInFile(element);
+    element_in_lines_.AddItem(element, lines_csptr);
     return lines_sptr;
   }
 }
 
-FileContent::LineNoSetSPtr
- FileContent::SearchElementInFile(const std::string &element)
+FileContent::LineNoSetCSPtr
+ FileContent::SearchElementInFile(const std::string &element) const
 {
   LineNoSetSPtr lines_sptr = std::make_shared<std::set<size_t>>();
 
