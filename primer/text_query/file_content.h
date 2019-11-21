@@ -13,7 +13,6 @@ class FileContent
 public:
   using SPtr = std::shared_ptr<FileContent>;
   using CSPtr = std::shared_ptr<const FileContent>;
-  using WPtr = std::weak_ptr<FileContent>;
   using CWPtr = std::weak_ptr<const FileContent>;
   using LineNoSetCSPtr = std::shared_ptr<const std::set<size_t>>;
 

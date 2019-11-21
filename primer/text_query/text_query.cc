@@ -47,7 +47,8 @@ std::ostream &QueryResult::ShowResult(std::ostream &os) const
 
 void TextQuery::Open(const std::string &file_name)
 {
-  if(IsOpen()) {
+  if(IsOpen(file_name)) {
+    file_name_ = file_name;
     return;
   }
 
@@ -67,11 +68,12 @@ void TextQuery::Open(const std::string &file_name)
 
   FileContentRepository::GetInstance().AddItem(std::move(content_sptr));
   input.close();
+  file_name_ = file_name;
 }
 
 QueryResult TextQuery::Query(const std::string &element) const
 {
-  auto spec_sptr = GetFileNameSpecification();
+  auto spec_sptr = GetFileNameSpecification(file_name_);
   auto file_content_list =
    FileContentRepository::GetInstance().Query(*spec_sptr);
   if(file_content_list.empty()) {

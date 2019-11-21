@@ -1,32 +1,31 @@
 #ifndef CPP_LOCAL_TEST_TEXT_QUERY_TEXT_QUERY_H_
 #define CPP_LOCAL_TEST_TEXT_QUERY_TEXT_QUERY_H_
 
-#include <map>
-#include <set>
 #include <string>
 #include <iostream>
 #include <memory>
-#include <fstream>
 
 #include "file_content_repository.h"
 
 class QueryResult
 {
 public:
-  QueryResult() = delete;
-  QueryResult(bool is_found, const std::string &file_name = "",
-   const std::string element = ""): is_found_(is_found), file_name_(file_name),
-    elememt_(element)
+  explicit QueryResult(bool is_found = false): is_found_(is_found)
+  {}
+
+  QueryResult(bool is_found, const std::string &file_name = std::string(),
+   const std::string element = std::string()): is_found_(is_found),
+    file_name_(file_name), elememt_(element)
   {}
 
   void set_lines(const FileContent::LineNoSetCSPtr &csptr)
   {
-    line_no_set_cwptr_ = csptr;
+    line_no_set_csptr_ = csptr;
   }
 
   void set_file_content(const FileContent::CSPtr &csptr)
   {
-    file_content_cwptr_ = csptr;
+    file_content_csptr_ = csptr;
   }
 
   bool IsFound() const
@@ -42,15 +41,16 @@ private:
   bool is_found_ = false;
   std::string file_name_;
   std::string elememt_;
-  FileContent::LineNoSetCWPtr line_no_set_cwptr_;
-  FileContent::CWPtr file_content_cwptr_;
+  FileContent::LineNoSetCSPtr line_no_set_csptr_;
+  FileContent::CSPtr file_content_csptr_;
 };
 
 class TextQuery
 {
 public:
   
-  TextQuery() = default;
+  TextQuery(): file_name_(std::string())
+  {}
   
   TextQuery(const TextQuery &) = delete;
   
@@ -58,17 +58,28 @@ public:
   
   void Open(const std::string &file_name);
   
-  bool IsOpen() const
+  bool IsOpen(const std::string &file_name) const
   {
-    auto spec_sptr = GetFileNameSpecification();
+    bool result = false;
+
+    auto spec_sptr = GetFileNameSpecification(file_name);
     auto list = FileContentRepository::GetInstance().Query(*spec_sptr);
-    return !list.empty();
+    if(!list.empty()) {
+      result = true;
+    }
+
+    return result;
   }
   
   void Close()
   {
-    auto spec_sptr = GetFileNameSpecification();
+    if(file_name_ == std::string()) {
+      return;
+    }
+
+    auto spec_sptr = GetFileNameSpecification(file_name_);
     FileContentRepository::GetInstance().RemoveItems(*spec_sptr);
+    file_name_ = std::string();
   }
 
   QueryResult Query(const std::string &element) const;
@@ -76,10 +87,11 @@ public:
   virtual ~TextQuery();
   
 private:
-  FileContentSpecificationByFileName::SPtr GetFileNameSpecification() const
+  FileContentSpecificationByFileName::SPtr
+    GetFileNameSpecification(const std::string &file_name) const
   {
     FileContentSpecificationByFileName::SPtr spec_sptr =
-     std::make_shared<FileContentSpecificationByFileName>(file_name_);
+     std::make_shared<FileContentSpecificationByFileName>(file_name);
 
     return std::move(spec_sptr);
   }
